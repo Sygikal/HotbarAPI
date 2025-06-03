@@ -40,7 +40,7 @@ public class HotbarHighlightLoader implements SimpleSynchronousResourceReloadLis
 
                 Color color = Color.decode(data.get("color").getAsString());
 
-                Identifier hotbarId = Identifier.of(id.getNamespace(), hotbarHighlightId);
+                Identifier hotbarId = Identifier.tryParse(id.getNamespace(), hotbarHighlightId);
                 HotbarAPI.hotbarHighlights.put(hotbarId, new HotbarHighlight(hotbarId, texture, color));
             } catch (IOException e) {
                 throw new RuntimeException(e);

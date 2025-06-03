@@ -6,3 +6,8 @@ accessible field net/minecraft/client/gui/hud/InGameHud renderHealthValue I
 accessible class net/minecraft/client/gui/hud/InGameHud$HeartType
 accessible field net/minecraft/client/gui/hud/InGameHud heartJumpEndTick J
 accessible method net/minecraft/client/gui/hud/InGameHud$HeartType fromPlayerState (Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/client/gui/hud/InGameHud$HeartType;
+accessible method net/minecraft/client/gui/hud/InGameHud renderAirBubbles (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;III)V
+accessible method net/minecraft/client/gui/hud/InGameHud renderArmor (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;IIII)V
+accessible method net/minecraft/client/gui/hud/InGameHud renderHealthBar (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;IIIIFIIIZ)V
+accessible method net/minecraft/client/gui/hud/InGameHud renderFood (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;II)V
+accessible method net/minecraft/client/gui/hud/InGameHud renderMountHealth (Lnet/minecraft/client/gui/DrawContext;)V

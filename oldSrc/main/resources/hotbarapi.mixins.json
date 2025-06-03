@@ -3,12 +3,14 @@
   "package": "dev.sygii.hotbarapi.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "compat.HUDOverlayHandlerMixin",
+    "entity.PlayerEntityMixin",
+    "entity.ServerPlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
-    "InGameHudInvoker",
     "InGameHudMixin"
   ]
 }
