@@ -1,4 +1,3 @@
-/*
 package dev.sygii.hotbarapi.mixin.compat;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,4 +12,3 @@ public interface HUDOverlayHandlerMixin {
     @Invoker("generateBarOffsets")
     public void invokeGenerateBarOffsets(int top, int left, int right, int ticks, PlayerEntity player);
 }
-*/

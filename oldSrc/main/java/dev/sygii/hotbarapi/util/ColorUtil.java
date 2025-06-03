@@ -7,9 +7,9 @@ import java.awt.*;
 
 public class ColorUtil {
 
-    /*public static void setColor(DrawContext context, int hex) {
+    public static void setColor(DrawContext context, int hex) {
         context.setShaderColor(ColorHelper.Argb.getRed(hex) / 255.0F, ColorHelper.Argb.getGreen(hex) / 255.0F, ColorHelper.Argb.getBlue(hex) / 255.0F, ColorHelper.Argb.getAlpha(hex) / 255.0F);
-    }*/
+    }
 
     public static int fade(int color1, int color2, float offset) {
         if (offset > 1) {

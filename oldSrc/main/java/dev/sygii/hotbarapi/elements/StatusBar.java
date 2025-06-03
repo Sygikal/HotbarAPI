@@ -3,7 +3,6 @@ package dev.sygii.hotbarapi.elements;
 import dev.sygii.hotbarapi.HotbarAPI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -59,22 +58,22 @@ public class StatusBar extends HudElement {
         float apparition = maxHealth / scale;
         for(int w = 0; w < scale; ++w) {
             int xPosition = x + (direction.equals(Direction.L2R) ? (position.equals(Position.RIGHT) ? -72 : 0) + w * 8 : (position.equals(Position.LEFT) ? 72 : 0) + -(w * 8));
-            context.drawTexture(RenderLayer::getGuiTextured, getTexture(), xPosition, y, 0, 0, 9, 9, 27, 9);
+            context.drawTexture(getTexture(), xPosition, y, 0, 0, 9, 9, 27, 9);
 
             if (w * apparition + 1 < health) {
-                context.drawTexture(RenderLayer::getGuiTextured, getTexture(), xPosition, y, 9, 0, 9, 9, 27, 9);
+                context.drawTexture(getTexture(), xPosition, y, 9, 0, 9, 9, 27, 9);
             }
 
             //System.out.println(w * apparition + 1);
 
             if (w * apparition + 1 == health) {
-                context.drawTexture(RenderLayer::getGuiTextured, getTexture(), xPosition, y, 18, 0, 9, 9, 27, 9);
+                context.drawTexture(getTexture(), xPosition, y, 18, 0, 9, 9, 27, 9);
             }
         }
     }
 
     public boolean isVisible(MinecraftClient client, PlayerEntity playerEntity) {
-        return playerEntity.getGameMode().isSurvivalLike();
+        return true;
     }
 
     public float getHeight(MinecraftClient client, PlayerEntity playerEntity) {

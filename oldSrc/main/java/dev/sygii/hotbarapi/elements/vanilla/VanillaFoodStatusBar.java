@@ -12,15 +12,15 @@ import net.minecraft.util.Identifier;
 import squeek.appleskin.client.HUDOverlayHandler;
 
 public class VanillaFoodStatusBar extends StatusBar {
-    //private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
+    private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
 
     public VanillaFoodStatusBar() {
-        super(Identifier.ofVanilla("hunger"), Identifier.tryParse(HotbarAPI.MOD_ID, "textures/gui/sex.png"), Position.RIGHT, Direction.R2L);
+        super(new Identifier("hunger"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/sex.png"), Position.RIGHT, Direction.R2L);
     }
 
     @Override
     public void render(MinecraftClient client, DrawContext context, PlayerEntity playerEntity, int xPosition, int yPosition) {
-        /*HungerManager hungerManager = playerEntity.getHungerManager();
+        HungerManager hungerManager = playerEntity.getHungerManager();
         int k = hungerManager.getFoodLevel();
 
         if (FabricLoader.getInstance().isModLoaded("appleskin")) {
@@ -53,8 +53,6 @@ public class VanillaFoodStatusBar extends StatusBar {
 
         if (FabricLoader.getInstance().isModLoaded("appleskin")) {
             HUDOverlayHandler.INSTANCE.onRender(context);
-        }*/
-
-        client.inGameHud.renderFood(context,playerEntity,yPosition,xPosition);
+        }
     }
 }

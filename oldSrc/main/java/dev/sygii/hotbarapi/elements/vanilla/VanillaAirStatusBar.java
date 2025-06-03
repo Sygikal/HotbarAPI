@@ -10,17 +10,15 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 public class VanillaAirStatusBar extends StatusBar {
-    private static final Identifier AIR_TEXTURE = Identifier.ofVanilla("hud/air");
-    private static final Identifier AIR_BURSTING_TEXTURE = Identifier.ofVanilla("hud/air_bursting");
-    private static final Identifier AIR_EMPTY_TEXTURE = Identifier.ofVanilla("hud/air_empty");
+    private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
 
     public VanillaAirStatusBar() {
-        super(Identifier.ofVanilla("air"), Identifier.tryParse(HotbarAPI.MOD_ID, "textures/gui/sex.png"), StatusBar.Position.RIGHT, StatusBar.Direction.R2L);
+        super(new Identifier("air"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/sex.png"), StatusBar.Position.RIGHT, StatusBar.Direction.R2L);
     }
 
     @Override
     public void render(MinecraftClient client, DrawContext context, PlayerEntity playerEntity, int xPosition, int yPosition) {
-        /*int y = playerEntity.getMaxAir();
+        int y = playerEntity.getMaxAir();
         int z = Math.min(playerEntity.getAir(), y);
 
         if (playerEntity.isSubmergedIn(FluidTags.WATER) || z < y) {
@@ -34,17 +32,13 @@ public class VanillaAirStatusBar extends StatusBar {
                     context.drawTexture(ICONS, xPosition - ad * 8, yPosition, 25, 18, 9, 9);
                 }
             }
-        }*/
-
-        client.inGameHud.renderAirBubbles(context, playerEntity, 0, yPosition, xPosition);
+        }
     }
 
     @Override
     public boolean isVisible(MinecraftClient client, PlayerEntity playerEntity) {
-        int i = playerEntity.getMaxAir();
-        //int j = Math.min( (long) playerEntity.getAir(), 0, i);
-        int j = Math.min(Math.max(playerEntity.getAir(), 0), i);
-        boolean bl = playerEntity.isSubmergedIn(FluidTags.WATER);
-        return bl || j < i;
+        int y = playerEntity.getMaxAir();
+        int z = Math.min(playerEntity.getAir(), y);
+        return playerEntity.isSubmergedIn(FluidTags.WATER) || z < y;
     }
 }

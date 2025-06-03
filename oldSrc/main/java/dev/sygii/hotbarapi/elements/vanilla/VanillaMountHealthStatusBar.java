@@ -10,15 +10,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class VanillaMountHealthStatusBar extends StatusBar {
-    //private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
+    private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
 
     public VanillaMountHealthStatusBar() {
-        super(Identifier.ofVanilla("mount_health"), Identifier.tryParse(HotbarAPI.MOD_ID, "textures/gui/sex.png"), Position.RIGHT, Direction.R2L, true);
+        super(new Identifier("mount_health"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/sex.png"), Position.RIGHT, Direction.R2L, true);
     }
 
     @Override
     public void render(MinecraftClient client, DrawContext context, PlayerEntity playerEntity, int xPosition, int yPosition) {
-        /*LivingEntity livingEntity = this.getRiddenEntity(client);
+        LivingEntity livingEntity = this.getRiddenEntity(client);
         if (livingEntity != null) {
             int i = this.getHeartCount(livingEntity);
             if (i != 0) {
@@ -48,9 +48,7 @@ public class VanillaMountHealthStatusBar extends StatusBar {
                 }
 
             }
-        }*/
-        context.getMatrices().translate(0,-(context.getScaledWindowHeight() - 39) + yPosition,0);
-        client.inGameHud.renderMountHealth(context);
+        }
     }
 
     private int getHeartCount(LivingEntity entity) {

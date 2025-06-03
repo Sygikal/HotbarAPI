@@ -8,13 +8,12 @@ import dev.sygii.hotbarapi.data.HotbarHighlightLoader;
 import dev.sygii.hotbarapi.elements.HotbarHighlight;
 import dev.sygii.hotbarapi.elements.SimpleStatusBar;
 import dev.sygii.hotbarapi.elements.StatusBar;
-import dev.sygii.hotbarapi.elements.vanilla.*;
 import dev.sygii.hotbarapi.network.HotbarHighlightPacket;
+import dev.sygii.hotbarapi.elements.vanilla.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -46,7 +45,7 @@ import java.util.List;
 public class HotbarAPI implements ModInitializer {
 	public static final String MOD_ID = "hotbarapi";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	public static final Identifier NULL_HOTBAR = Identifier.tryParse(HotbarAPI.MOD_ID, "null_hotbar_texture");
+	public static final Identifier NULL_HOTBAR = Identifier.of(HotbarAPI.MOD_ID, "null_hotbar_texture");
 
 	public static final List<StatusBar> statusBars = new ArrayList<StatusBar>();
 	//public static final List<HotbarHighlight> hotbarHighlights = new ArrayList<HotbarHighlight>();
@@ -62,14 +61,13 @@ public class HotbarAPI implements ModInitializer {
 	public void onInitialize() {
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new HotbarHighlightLoader());
-
-		//addStatusBar(new SimpleStatusBar(Identifier.of(MOD_ID, "full_health"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/custom_heart.png"), StatusBar.Position.LEFT, StatusBar.Direction.L2R, (playerEntity) -> playerEntity.getMaxHealth(), (ent) -> ent.getHealth()));
-
 		addStatusBar(new VanillaHealthStatusBar());
+		//addStatusBar(new SimpleStatusBar(Identifier.of(MOD_ID, "full_health"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/custom_heart.png"), StatusBar.Position.LEFT, StatusBar.Direction.L2R, (playerEntity) -> playerEntity.getMaxHealth(), (ent) -> ent.getHealth()));
 		addStatusBar(new VanillaArmorStatusBar());
+
 		addStatusBar(new VanillaFoodStatusBar());
-		addStatusBar(new VanillaAirStatusBar());
 		addStatusBar(new VanillaMountHealthStatusBar());
+		addStatusBar(new VanillaAirStatusBar());
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (screenKey.wasPressed()) {
@@ -86,12 +84,12 @@ public class HotbarAPI implements ModInitializer {
 			}
 		});
 
-		HotbarAPI.hotbarHighlights.put(Identifier.tryParse("hotbarapi", "test"), new HotbarHighlight(Identifier.tryParse("hotbarapi", "test"), new Color(255, 0, 0)));
+		HotbarAPI.hotbarHighlights.put(Identifier.of("hotbarapi", "test"), new HotbarHighlight(Identifier.of("hotbarapi", "test"), new Color(255, 0, 0)));
 
 		//addStatusBar(new StatusBar(Identifier.of(MOD_ID, "stamina"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/stamina.png"), StatusBar.Position.LEFT, StatusBar.Direction.R2L));
 		//addStatusBar(new StatusBar(Identifier.of(MOD_ID, "sex"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/sex.png"), StatusBar.Position.LEFT, StatusBar.Direction.L2R));
 		//addStatusBar(new StatusBar(Identifier.of(MOD_ID, "thirst"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/thirst.png"), StatusBar.Position.RIGHT, StatusBar.Direction.R2L));
-		addStatusBar(new SimpleStatusBar(HotbarAPI.identifierOf("stamina"), HotbarAPI.identifierOf( "textures/gui/stamina.png"), StatusBar.Position.RIGHT, StatusBar.Direction.R2L, (playerEntity) -> 40, (ent) -> 20));
+		addStatusBar(new SimpleStatusBar(HotbarAPI.identifierOf("stamina"), HotbarAPI.identifierOf( "textures/gui/stamina.png"), StatusBar.Position.RIGHT, StatusBar.Direction.R2L, (playerEntity) -> 40, (ent) -> ((PlayerEntityAccessor)ent).getStamina()));
 
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, environment) -> {
@@ -109,12 +107,11 @@ public class HotbarAPI implements ModInitializer {
 					}))))));
 		});
 
-		PayloadTypeRegistry.playS2C().register(HotbarHighlightPacket.PACKET_ID, HotbarHighlightPacket.PACKET_CODEC);
-
-		ClientPlayNetworking.registerGlobalReceiver(HotbarHighlightPacket.PACKET_ID, (payload, context) -> {
+		ClientPlayNetworking.registerGlobalReceiver(HotbarHighlightPacket.PACKET_ID, (client, handler, buf, sender) -> {
+			HotbarHighlightPacket payload = new HotbarHighlightPacket(buf);
 			int slot = payload.slot();
 			Identifier highlight = payload.highlight();
-			context.client().execute(() -> {
+			client.execute(() -> {
 				HotbarAPI.mappedHotbarHighlights.put(slot, HotbarAPI.hotbarHighlights.get(highlight));
 			});
 		});
@@ -136,8 +133,8 @@ public class HotbarAPI implements ModInitializer {
 
 	public static int indexOf(ServerPlayerEntity serverPlayerEntity, ItemStack stack) {
 		for (int i = 0; i < 9; i++) {
-			ItemStack itemStack = serverPlayerEntity.getInventory().getMainStacks().get(i);
-			if (!serverPlayerEntity.getInventory().getMainStacks().get(i).isEmpty() && ItemStack.areEqual(itemStack, stack)) {
+			ItemStack itemStack = serverPlayerEntity.getInventory().main.get(i);
+			if (!serverPlayerEntity.getInventory().main.get(i).isEmpty() && ItemStack.areEqual(itemStack, stack)) {
 				return i;
 			}
 		}
@@ -188,6 +185,6 @@ public class HotbarAPI implements ModInitializer {
 	}
 
 	public static Identifier identifierOf(String name) {
-		return Identifier.tryParse(MOD_ID, name);
+		return Identifier.of(MOD_ID, name);
 	}
 }

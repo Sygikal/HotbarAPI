@@ -10,15 +10,15 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 public class VanillaArmorStatusBar extends StatusBar {
-    //private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
+    private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
 
     public VanillaArmorStatusBar() {
-        super(Identifier.ofVanilla("armor"), Identifier.tryParse(HotbarAPI.MOD_ID, "textures/gui/sex.png"), Position.LEFT, Direction.R2L);
+        super(new Identifier("armor"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/sex.png"), Position.LEFT, Direction.R2L);
     }
 
     @Override
     public void render(MinecraftClient client, DrawContext context, PlayerEntity playerEntity, int xPosition, int yPosition) {
-        /*float f = Math.max((float)playerEntity.getAttributeValue(EntityAttributes.MAX_HEALTH), (float)Math.max(client.inGameHud.renderHealthValue, MathHelper.ceil(playerEntity.getHealth())));
+        float f = Math.max((float)playerEntity.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH), (float)Math.max(client.inGameHud.renderHealthValue, MathHelper.ceil(playerEntity.getHealth())));
         int p = MathHelper.ceil(playerEntity.getAbsorptionAmount());
         int q = MathHelper.ceil((f + (float)p) / 2.0F / 10.0F);
         int r = Math.max(10 - (q - 2), 3);
@@ -39,8 +39,7 @@ public class VanillaArmorStatusBar extends StatusBar {
                     context.drawTexture(ICONS, x, yPosition, 16, 9, 9, 9);
                 }
             }
-        }*/
-        client.inGameHud.renderArmor(context, playerEntity, yPosition + 10, 0, 0, xPosition);
+        }
     }
 
     @Override
