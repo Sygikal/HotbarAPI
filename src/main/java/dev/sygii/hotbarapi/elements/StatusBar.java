@@ -1,16 +1,10 @@
-package dev.sygii.hotbarapi;
+package dev.sygii.hotbarapi.elements;
 
+import dev.sygii.hotbarapi.HotbarAPI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.random.Random;
-
-import java.net.IDN;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class StatusBar extends HudElement {
     private final Identifier id;

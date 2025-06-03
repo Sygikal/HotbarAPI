@@ -1,21 +1,15 @@
-package dev.sygii.hotbarapi.vanilla;
+package dev.sygii.hotbarapi.elements.vanilla;
 
 import dev.sygii.hotbarapi.HotbarAPI;
-import dev.sygii.hotbarapi.StatusBar;
+import dev.sygii.hotbarapi.elements.StatusBar;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
-
-import java.util.List;
+import squeek.appleskin.client.HUDOverlayHandler;
 
 public class VanillaFoodStatusBar extends StatusBar {
     private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
@@ -28,6 +22,10 @@ public class VanillaFoodStatusBar extends StatusBar {
     public void render(MinecraftClient client, DrawContext context, PlayerEntity playerEntity, int xPosition, int yPosition) {
         HungerManager hungerManager = playerEntity.getHungerManager();
         int k = hungerManager.getFoodLevel();
+
+        if (FabricLoader.getInstance().isModLoaded("appleskin")) {
+            HUDOverlayHandler.INSTANCE.onPreRender(context);
+        }
 
         for(int y = 0; y < 10; ++y) {
             int z = yPosition;
@@ -51,6 +49,10 @@ public class VanillaFoodStatusBar extends StatusBar {
             if (y * 2 + 1 == k) {
                 context.drawTexture(ICONS, ac, z, aa + 45, 27, 9, 9);
             }
+        }
+
+        if (FabricLoader.getInstance().isModLoaded("appleskin")) {
+            HUDOverlayHandler.INSTANCE.onRender(context);
         }
     }
 }

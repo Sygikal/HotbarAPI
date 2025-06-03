@@ -1,19 +1,13 @@
-package dev.sygii.hotbarapi.vanilla;
+package dev.sygii.hotbarapi.elements.vanilla;
 
 import dev.sygii.hotbarapi.HotbarAPI;
-import dev.sygii.hotbarapi.HudElement;
-import dev.sygii.hotbarapi.StatusBar;
+import dev.sygii.hotbarapi.elements.StatusBar;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
-
-import java.util.List;
 
 public class VanillaAirStatusBar extends StatusBar {
     private static final Identifier ICONS = new Identifier("textures/gui/icons.png");

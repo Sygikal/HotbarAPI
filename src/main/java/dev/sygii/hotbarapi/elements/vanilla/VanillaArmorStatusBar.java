@@ -1,19 +1,13 @@
-package dev.sygii.hotbarapi.vanilla;
+package dev.sygii.hotbarapi.elements.vanilla;
 
 import dev.sygii.hotbarapi.HotbarAPI;
-import dev.sygii.hotbarapi.StatusBar;
+import dev.sygii.hotbarapi.elements.StatusBar;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-
-import java.util.List;
 
 public class VanillaArmorStatusBar extends StatusBar {
     private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
