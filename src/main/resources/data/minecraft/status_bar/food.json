@@ -1,0 +1,10 @@
+{
+  "before": [
+    "minecraft:air"
+  ],
+  "texture": "minecraft:textures/gui/icons.png",
+  "position": "LEFT",
+  "direction" : "L2R",
+  "renderer": "minecraft:food_renderer",
+  "logic": "hotbarapi:default"
+}

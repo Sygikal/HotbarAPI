@@ -1,0 +1,10 @@
+{
+  "after": [
+    "minecraft:health"
+  ],
+  "texture": "minecraft:textures/gui/icons.png",
+  "position": "LEFT",
+  "direction" : "L2R",
+  "renderer": "minecraft:armor_renderer",
+  "logic": "minecraft:armor_logic"
+}
