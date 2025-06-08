@@ -7,6 +7,7 @@ import dev.sygii.hotbarapi.HotbarAPI;
 import dev.sygii.hotbarapi.elements.HotbarHighlight;
 import dev.sygii.hotbarapi.elements.StatusBar;
 import dev.sygii.hotbarapi.access.InGameHudAccessor;
+import dev.sygii.hotbarapi.elements.StatusBarRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -162,7 +163,7 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         if (playerEntity != null) {
             offset = Math.round(HotbarAPI.getMaxStatusHeight(client, playerEntity));
         }
-        return original + 20 - offset;
+        return original + 19 - offset;
     }
 
     @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", ordinal = 0), index = 1)
@@ -172,7 +173,7 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         if (playerEntity != null) {
             offset = Math.round(HotbarAPI.getMaxStatusHeight(client, playerEntity));
         }
-        return og + 20 - offset;
+        return og + 19 - offset;
     }
 
     @Inject(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"))
@@ -209,19 +210,19 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         }
     }
 
-    @Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", ordinal = 2))
+    /*@Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", ordinal = 2))
     private void addBars(DrawContext context, CallbackInfo ci, @Local PlayerEntity playerEntity, @Local(ordinal = 3) int m, @Local(ordinal = 4) int n, @Local(ordinal = 5) int o) {
 
         for (StatusBar statusBar : HotbarAPI.statusBars) {
             this.client.getProfiler().swap(statusBar.getId().toString());
 
-            if (statusBar.isVisible(client, playerEntity) && !statusBar.isImportant()) {
+            if (statusBar.getLogic().isVisible(client, playerEntity) && !statusBar.isImportant()) {
                 //statusBar.renderStatusBar(client, context, playerEntity, scaledWidth / 2 - 91, scaledWidth / 2 + 91, scaledHeight - 39);
-                int xPos = statusBar.getPosition().equals(StatusBar.Position.LEFT) ? scaledWidth / 2 - 91 : scaledWidth / 2 + 91 - 9;
-                statusBar.render(client, context, playerEntity, xPos, (int) (scaledHeight - 39 - HotbarAPI.getHeightOffest(client, statusBar, playerEntity)));
+                int xPos = statusBar.getRenderer().getPosition().equals(StatusBarRenderer.Position.LEFT) ? scaledWidth / 2 - 91 : scaledWidth / 2 + 91 - 9;
+                //statusBar.getRenderer().render(client, context, playerEntity, xPos, (int) (scaledHeight - 39 - HotbarAPI.getHeightOffest(client, statusBar, playerEntity)), statusBar.getLogic());
             }
         }
-    }
+    }*/
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderMountHealth(Lnet/minecraft/client/gui/DrawContext;)V"))
     private void stopRenderMount(DrawContext context, float tickDelta, CallbackInfo ci) {
@@ -229,9 +230,10 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         if (playerEntity != null) {
             for (StatusBar statusBar : HotbarAPI.statusBars) {
                 this.client.getProfiler().swap(statusBar.getId().toString());
-                if (statusBar.isVisible(client, playerEntity) && statusBar.isImportant()) {
-                    int xPos = statusBar.getPosition().equals(StatusBar.Position.LEFT) ? scaledWidth / 2 - 91 : scaledWidth / 2 + 91 - 9;
-                    statusBar.render(client, context, playerEntity, xPos, (int) (scaledHeight - 39 - HotbarAPI.getHeightOffest(client, statusBar, playerEntity)));
+
+                if (statusBar.getLogic().isVisible(client, playerEntity) && statusBar.getGameModes().contains(client.interactionManager.getCurrentGameMode())) {
+                    int xPos = statusBar.getRenderer().getPosition().equals(StatusBarRenderer.Position.LEFT) ? scaledWidth / 2 - 91 : scaledWidth / 2 + 91 - 9;
+                    statusBar.getRenderer().render(client, context, playerEntity, xPos, (int) (scaledHeight - 39 - HotbarAPI.getHeightOffest(client, statusBar, playerEntity)), statusBar.getLogic());
                 }
             }
         }
