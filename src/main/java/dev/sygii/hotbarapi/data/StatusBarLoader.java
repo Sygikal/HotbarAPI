@@ -62,12 +62,13 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                     //beforeIds = Identifier.tryParse(data.get("before").getAsString());
                 }
 
-                Identifier replaceId = null;
+                Identifier replaceId;
                 boolean replace = false;
                 if (data.has("replace")) {
                     replace = true;
                     replaceId = Identifier.tryParse(data.get("replace").getAsString());
-
+                } else {
+                    replaceId = null;
                 }
                 Identifier texture = Identifier.tryParse(data.get("texture").getAsString());
                 Identifier barId = Identifier.of(id.getNamespace(), statusBarId);
@@ -105,9 +106,12 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                     gameModes.add(GameMode.SURVIVAL);
                     gameModes.add(GameMode.ADVENTURE);
                 }
+                if (replace) {
+                    HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaceId));
+                }
 
                 StatusBar newstatus = new StatusBar(barId, renderer == null ? defaultRenderer : renderer.update(position, direction), logic == null ? HotbarAPI.defaultLogic : logic, beforeIds, afterIds, gameModes);
-                HotbarAPI.statusBars.add( newstatus);
+                HotbarAPI.statusBars.add(newstatus);
 
                 //HotbarAPI.statusBars.sort(StatusBar::compareTo);
 
