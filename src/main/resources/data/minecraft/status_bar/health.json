@@ -1,7 +1,10 @@
 {
+  "before": [
+    "minecraft:armor"
+  ],
   "texture": "minecraft:textures/gui/icons.png",
-  "position": "RIGHT",
-  "direction" : "R2L",
+  "position": "LEFT",
+  "direction" : "L2R",
   "renderer": "minecraft:health_renderer",
   "logic": "hotbarapi:default"
 }

@@ -1,10 +1,11 @@
 {
   "after": [
-    "food"
+    "minecraft:food",
+    "minecraft:mount_health"
   ],
   "texture": "minecraft:textures/gui/icons.png",
-  "position": "LEFT",
-  "direction" : "L2R",
+  "position": "RIGHT",
+  "direction" : "R2L",
   "renderer": "minecraft:air_renderer",
   "logic": "minecraft:air_logic"
 }
