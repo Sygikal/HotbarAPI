@@ -286,8 +286,8 @@ public class HotbarAPI implements ModInitializer {
 	}
 
 	public static float getMaxStatusHeight(MinecraftClient client, PlayerEntity playerEntity) {
-		List<StatusBar> rightBars = HotbarAPI.statusBars.stream().filter(s -> s.getRenderer().getPosition().equals(StatusBarRenderer.Position.RIGHT)).filter(s -> s.getLogic().isVisible(client, playerEntity)).toList();
-		List<StatusBar> leftBars = HotbarAPI.statusBars.stream().filter(s -> s.getRenderer().getPosition().equals(StatusBarRenderer.Position.LEFT)).filter(s -> s.getLogic().isVisible(client, playerEntity)).toList();
+		List<StatusBar> rightBars = HotbarAPI.statusBars.stream().filter(s -> s.getRenderer().getPosition().equals(StatusBarRenderer.Position.RIGHT)).filter(s -> s.getLogic().isVisible(client, playerEntity)).filter(s -> s.getGameModes().contains(client.interactionManager.getCurrentGameMode())).toList();
+		List<StatusBar> leftBars = HotbarAPI.statusBars.stream().filter(s -> s.getRenderer().getPosition().equals(StatusBarRenderer.Position.LEFT)).filter(s -> s.getLogic().isVisible(client, playerEntity)).filter(s -> s.getGameModes().contains(client.interactionManager.getCurrentGameMode())).toList();
 		float rightHeight = 0;
 		for (int x2 = 0; x2 < rightBars.size(); x2++) {
 			rightHeight += rightBars.get(x2).getRenderer().getHeight(client, playerEntity);
@@ -309,6 +309,8 @@ public class HotbarAPI implements ModInitializer {
 		}
 		return height;
 	}
+
+
 
 	public static Identifier identifierOf(String name) {
 		return Identifier.of(MOD_ID, name);
