@@ -24,8 +24,8 @@ public class HotbarHighlightLoader implements SimpleSynchronousResourceReloadLis
 
     @Override
     public void reload(ResourceManager manager) {
-        HotbarAPI.hotbarHighlights.clear();
-        manager.findResources("hotbar_highlights", id -> id.getPath().endsWith(".json")).forEach((id, resourceRef) -> {
+        //HotbarAPI.hotbarHighlights.clear();
+        manager.findResources("hotbar_highlight", id -> id.getPath().endsWith(".json")).forEach((id, resourceRef) -> {
             try {
                 InputStream stream = null;
                 stream = resourceRef.getInputStream();
