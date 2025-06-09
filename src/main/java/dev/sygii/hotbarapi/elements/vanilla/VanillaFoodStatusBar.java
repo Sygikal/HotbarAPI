@@ -30,9 +30,9 @@ public class VanillaFoodStatusBar {
             HungerManager hungerManager = playerEntity.getHungerManager();
             int k = hungerManager.getFoodLevel();
 
-            if (FabricLoader.getInstance().isModLoaded("appleskin")) {
+            /*if (FabricLoader.getInstance().isModLoaded("appleskin")) {
                 HUDOverlayHandler.INSTANCE.onPreRender(context);
-            }
+            }*/
 
             for(int y = 0; y < 10; ++y) {
                 int z = yPosition;
@@ -60,9 +60,9 @@ public class VanillaFoodStatusBar {
                 }
             }
 
-            if (FabricLoader.getInstance().isModLoaded("appleskin")) {
+            /*if (FabricLoader.getInstance().isModLoaded("appleskin")) {
                 HUDOverlayHandler.INSTANCE.onRender(context);
-            }
+            }*/
         }
     }
 }
