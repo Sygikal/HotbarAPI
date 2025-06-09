@@ -32,7 +32,7 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
 
     @Override
     public void reload(ResourceManager manager) {
-        HotbarAPI.hotbarHighlights.clear();
+        HotbarAPI.statusBars.clear();
         manager.findResources("status_bar", id -> id.getPath().endsWith(".json")).forEach((id, resourceRef) -> {
             try {
                 InputStream stream = null;
