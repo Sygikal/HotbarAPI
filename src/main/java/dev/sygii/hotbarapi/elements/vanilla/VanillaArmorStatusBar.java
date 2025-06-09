@@ -34,7 +34,7 @@ public class VanillaArmorStatusBar {
             int u = playerEntity.getArmor();
             for(int w = 0; w < 10; ++w) {
                 if (u >= 0) {
-                    int x = xPosition + (getDirection().equals(Direction.L2R) ? (getPosition().equals(Position.RIGHT) ? -72 : 0) + w * 8 : (getPosition().equals(Position.LEFT) ? 72 : 0) + -(w * 8));
+                    int x = xPosition + (getDirection().equals(Direction.L2R) ? (getPosition().equals(Position.RIGHT) ? -72 : 0) + (w * 8) : (getPosition().equals(Position.LEFT) ? 72 : 0) + -(w * 8));
                     //int x = xPosition + w * 8;
                     if (w * 2 + 1 < u) {
                         context.drawTexture(ICONS, x, yPosition, 34, 9, 9, 9);

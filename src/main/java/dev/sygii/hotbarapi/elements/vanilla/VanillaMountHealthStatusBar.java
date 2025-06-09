@@ -40,7 +40,8 @@ public class VanillaMountHealthStatusBar{
                         for(int p = 0; p < o; ++p) {
                             int q = 52;
                             int r = 0;
-                            int s = xPosition - p * 8;
+                            int s = xPosition + (getDirection().equals(Direction.L2R) ? (getPosition().equals(Position.RIGHT) ? -72 : 0) + p * 8 : (getPosition().equals(Position.LEFT) ? 72 : 0) + -(p * 8));
+
                             context.drawTexture(ICONS, s, m, 52, 9, 9, 9);
                             if (p * 2 + 1 + n < j) {
                                 context.drawTexture(ICONS, s, m, 88, 9, 9, 9);
