@@ -1,7 +1,0 @@
-{
-  "texture": "hotbarapi:textures/gui/custom_heart.png",
-  "position": "LEFT",
-  "direction" : "L2R",
-  "renderer": "hotbarapi:default",
-  "logic": "hotbarapi:health_logic"
-}
