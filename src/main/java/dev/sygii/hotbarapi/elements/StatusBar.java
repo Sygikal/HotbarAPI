@@ -9,6 +9,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StatusBar extends HudElement implements Comparable<StatusBar> {
@@ -21,6 +22,9 @@ public class StatusBar extends HudElement implements Comparable<StatusBar> {
     private final List<Identifier> beforeIds;
     private final List<Identifier> afterIds;
     private final List<GameMode> gameModes;
+    private final List<StatusBarOverlay> overlays = new ArrayList<>();
+    private final List<StatusBarOverlay> underlays = new ArrayList<>();
+
 
     public StatusBar(Identifier id, StatusBarRenderer renderer, StatusBarLogic logic, List<Identifier> beforeIds, List<Identifier> afterIds, List<GameMode> gameModes) {
         this.id = id;
@@ -29,6 +33,22 @@ public class StatusBar extends HudElement implements Comparable<StatusBar> {
         this.beforeIds = beforeIds;
         this.afterIds = afterIds;
         this.gameModes = gameModes;
+    }
+
+    public void addUnderlay(StatusBarOverlay underlay) {
+        this.underlays.add(underlay);
+    }
+
+    public List<StatusBarOverlay> getUnderlays() {
+        return underlays;
+    }
+
+    public void addOverlay(StatusBarOverlay overlay) {
+        this.overlays.add(overlay);
+    }
+
+    public List<StatusBarOverlay> getOverlays() {
+        return overlays;
     }
 
     /*public StatusBar(Identifier id, Identifier texture, Position position, Direction direction, StatusBarLogic logic) {

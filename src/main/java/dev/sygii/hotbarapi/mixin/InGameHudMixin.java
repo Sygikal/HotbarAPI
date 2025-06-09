@@ -7,6 +7,7 @@ import dev.sygii.hotbarapi.HotbarAPI;
 import dev.sygii.hotbarapi.elements.HotbarHighlight;
 import dev.sygii.hotbarapi.elements.StatusBar;
 import dev.sygii.hotbarapi.access.InGameHudAccessor;
+import dev.sygii.hotbarapi.elements.StatusBarOverlay;
 import dev.sygii.hotbarapi.elements.StatusBarRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -227,7 +228,23 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
             if (statusBar.getLogic().isVisible(client, playerEntity) && statusBar.getGameModes().contains(client.interactionManager.getCurrentGameMode())) {
                 //statusBar.renderStatusBar(client, context, playerEntity, scaledWidth / 2 - 91, scaledWidth / 2 + 91, scaledHeight - 39);
                 int xPos = statusBar.getRenderer().getPosition().equals(StatusBarRenderer.Position.LEFT) ? scaledWidth / 2 - 91 : scaledWidth / 2 + 91 - 9;
-                statusBar.getRenderer().render(client, context, playerEntity, xPos, (int) (scaledHeight - 39 - HotbarAPI.getHeightOffest(client, statusBar, playerEntity)), statusBar.getLogic());
+                int yPos = (int) (scaledHeight - 39 - HotbarAPI.getHeightOffest(client, statusBar, playerEntity));
+
+                if (!statusBar.getUnderlays().isEmpty()) {
+                    for (StatusBarOverlay underlay : statusBar.getUnderlays()) {
+                        if (underlay.getLogic().isVisible(client, playerEntity)) {
+                            underlay.getRenderer().render(client, context, playerEntity, xPos, yPos, underlay.getLogic());
+                        }
+                    }
+                }
+                statusBar.getRenderer().render(client, context, playerEntity, xPos, yPos, statusBar.getLogic());
+                if (!statusBar.getOverlays().isEmpty()) {
+                    for (StatusBarOverlay overlay : statusBar.getOverlays()) {
+                        if (overlay.getLogic().isVisible(client, playerEntity)) {
+                            overlay.getRenderer().render(client, context, playerEntity, xPos, yPos, overlay.getLogic());
+                        }
+                    }
+                }
             }
         }
     }
