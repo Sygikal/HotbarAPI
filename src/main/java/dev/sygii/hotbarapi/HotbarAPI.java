@@ -6,6 +6,7 @@ import dev.sygii.hotbarapi.access.InGameHudAccessor;
 import dev.sygii.hotbarapi.access.PlayerEntityAccessor;
 import dev.sygii.hotbarapi.data.HotbarHighlightLoader;
 import dev.sygii.hotbarapi.data.StatusBarLoader;
+import dev.sygii.hotbarapi.data.StatusBarOverlayLoader;
 import dev.sygii.hotbarapi.elements.HotbarHighlight;
 import dev.sygii.hotbarapi.elements.StatusBar;
 import dev.sygii.hotbarapi.elements.StatusBarLogic;
@@ -65,7 +66,6 @@ public class HotbarAPI implements ModInitializer {
 
 	public static final Map<Identifier, HotbarHighlight> hotbarHighlights = new LinkedHashMap<>();
 	public static final Map<Integer, HotbarHighlight> mappedHotbarHighlights = new LinkedHashMap<>();
-	public static KeyBinding screenKey = new KeyBinding("key.hotbarapi.test", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_K, "category.hotbarapi.keybind");
 
 	private static final SuggestionProvider<ServerCommandSource> HIGHLIGHT_SUGGESTION_PROVIDER = (context, builder) -> CommandSource.suggestIdentifiers(
 			HotbarAPI.hotbarHighlights.values().stream().map(HotbarHighlight::getId), builder);
@@ -75,40 +75,10 @@ public class HotbarAPI implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new StatusBarLoader());
-
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new HotbarHighlightLoader());
-		//addStatusBar(new VanillaHealthStatusBar());
-		//addStatusBar(new SimpleStatusBar(Identifier.of(MOD_ID, "full_health"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/custom_heart.png"), StatusBar.Position.LEFT, StatusBar.Direction.L2R, (playerEntity) -> playerEntity.getMaxHealth(), (ent) -> ent.getHealth()));
-		//addStatusBar(new VanillaArmorStatusBar());
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new StatusBarOverlayLoader());
 
-		//addStatusBar(new VanillaFoodStatusBar());
-		//addStatusBar(new VanillaMountHealthStatusBar());
-		//addStatusBar(new VanillaAirStatusBar());
-
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if (screenKey.wasPressed()) {
-				int min = 0;
-				int max = 8;
-				int randomNumber = (int) (Math.random() * (max - min + 1)) + min;
-				//HotbarAPI.highlightHotbarSlot(client, new Color(255, 0,0), randomNumber);
-				//HotbarAPI.hotbarHighlights.add(new HotbarHighlight(Identifier.of("hotbarapi", "test" + randomNumber), randomNumber, new Color(255, 0, 0)));
-				if(HotbarAPI.mappedHotbarHighlights.containsKey(randomNumber)) {
-					HotbarAPI.mappedHotbarHighlights.remove(randomNumber);
-				}
-				HotbarAPI.mappedHotbarHighlights.put(randomNumber, new HotbarHighlight(HotbarAPI.identifierOf( "test" + randomNumber), new Color(255, 0, 0)));
-				return;
-			}
-		});
-
-		HotbarAPI.hotbarHighlights.put(Identifier.of("hotbarapi", "test"), new HotbarHighlight(Identifier.of("hotbarapi", "test"), new Color(255, 0, 0)));
-
-		//addStatusBar(new StatusBar(Identifier.of(MOD_ID, "stamina"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/stamina.png"), StatusBar.Position.LEFT, StatusBar.Direction.R2L));
-		//addStatusBar(new StatusBar(Identifier.of(MOD_ID, "sex"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/sex.png"), StatusBar.Position.LEFT, StatusBar.Direction.L2R));
-		//addStatusBar(new StatusBar(Identifier.of(MOD_ID, "thirst"), Identifier.of(HotbarAPI.MOD_ID, "textures/gui/thirst.png"), StatusBar.Position.RIGHT, StatusBar.Direction.R2L));
-		//addStatusBar(new StatusBar(HotbarAPI.identifierOf("stamina"), HotbarAPI.identifierOf( "textures/gui/stamina.png"), StatusBar.Position.RIGHT, StatusBar.Direction.R2L, staminaLogic));
-
-		StatusBarLogic staminaLogic = new StatusBarLogic(HotbarAPI.identifierOf("stamina_logic"), (playerEntity) -> 40, (ent) -> ((PlayerEntityAccessor)ent).getStamina());
-		registerStatusBarLogic(staminaLogic);
+		//HotbarAPI.hotbarHighlights.put(Identifier.of("hotbarapi", "test"), new HotbarHighlight(Identifier.of("hotbarapi", "test"), new Color(255, 0, 0)));
 
 		StatusBarLogic healthLogic = new StatusBarLogic(HotbarAPI.identifierOf("health_logic"), LivingEntity::getMaxHealth, LivingEntity::getHealth);
 		registerStatusBarLogic(healthLogic);
@@ -121,8 +91,6 @@ public class HotbarAPI implements ModInitializer {
 		registerStatusBarRenderer(new VanillaHealthStatusBar.VanillaHealthStatusBarRenderer());
 		registerStatusBarLogic(new VanillaMountHealthStatusBar.VanillaMountHealthStatusBarLogic());
 		registerStatusBarRenderer(new VanillaMountHealthStatusBar.VanillaMountHealthStatusBarRenderer());
-
-
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, environment) -> {
 			dispatcher.register((CommandManager.literal("hhs").requires((serverCommandSource) -> {
