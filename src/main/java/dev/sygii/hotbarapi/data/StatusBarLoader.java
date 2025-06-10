@@ -4,18 +4,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.sygii.hotbarapi.HotbarAPI;
-import dev.sygii.hotbarapi.elements.HotbarHighlight;
 import dev.sygii.hotbarapi.elements.StatusBar;
 import dev.sygii.hotbarapi.elements.StatusBarLogic;
 import dev.sygii.hotbarapi.elements.StatusBarRenderer;
-import dev.sygii.hotbarapi.util.ColorUtil;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.stat.Stat;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
