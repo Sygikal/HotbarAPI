@@ -58,6 +58,7 @@ public class HotbarAPI implements ModInitializer {
 	/*SortedMap<String, Identifier> tm
 			= new TreeMap<String, Identifier>((a, b) -> b.compareTo(a));*/
 
+	public static final List<Identifier> replacedStatusBars = new ArrayList<Identifier>();
 	public static final List<StatusBar> statusBars = new ArrayList<StatusBar>();
 	public static final Map<Identifier, StatusBarLogic> statusBarLogics = new LinkedHashMap<>();
 	public static final Map<Identifier, StatusBarRenderer> statusBarRenderers = new LinkedHashMap<>();
@@ -82,6 +83,10 @@ public class HotbarAPI implements ModInitializer {
 
 		StatusBarLogic healthLogic = new StatusBarLogic(HotbarAPI.identifierOf("health_logic"), LivingEntity::getMaxHealth, LivingEntity::getHealth);
 		registerStatusBarLogic(healthLogic);
+		StatusBarLogic hurtLogic = new StatusBarLogic(HotbarAPI.identifierOf("hurt_time_logic"), (ent) -> ent.maxHurtTime, (ent) -> ent.hurtTime);
+		registerStatusBarLogic(hurtLogic);
+		StatusBarLogic staminaLogic = new StatusBarLogic(HotbarAPI.identifierOf("stamina_logic"), (ent) -> 40, (ent) -> ((PlayerEntityAccessor)ent).getStamina());
+		registerStatusBarLogic(staminaLogic);
 
 		registerStatusBarRenderer(new VanillaAirStatusBar.VanillaAirStatusBarRenderer());
 		registerStatusBarLogic(new VanillaAirStatusBar.VanillaAirStatusBarLogic());
@@ -134,7 +139,7 @@ public class HotbarAPI implements ModInitializer {
 	public static int indexOf(ServerPlayerEntity serverPlayerEntity, ItemStack stack) {
 		for (int i = 0; i < 9; i++) {
 			ItemStack itemStack = serverPlayerEntity.getInventory().main.get(i);
-			if (!serverPlayerEntity.getInventory().main.get(i).isEmpty() && ItemStack.areEqual(itemStack, stack)) {
+			if (!serverPlayerEntity.getInventory().main.get(i).isEmpty() && itemStack.getItem() == stack.getItem()) {
 				return i;
 			}
 		}

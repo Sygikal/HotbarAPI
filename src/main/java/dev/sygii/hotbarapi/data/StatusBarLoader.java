@@ -33,6 +33,7 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
     @Override
     public void reload(ResourceManager manager) {
         HotbarAPI.statusBars.clear();
+        HotbarAPI.replacedStatusBars.clear();
         manager.findResources("status_bar", id -> id.getPath().endsWith(".json")).forEach((id, resourceRef) -> {
             try {
                 InputStream stream = null;
@@ -75,11 +76,16 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                 StatusBarRenderer.Direction direction = StatusBarRenderer.Direction.valueOf(data.get("direction").getAsString().toUpperCase());
                 StatusBarRenderer.Position position = StatusBarRenderer.Position.valueOf(data.get("position").getAsString().toUpperCase());
 
-                Identifier logicId = Identifier.tryParse(data.get("logic").getAsString());
-                StatusBarLogic logic = HotbarAPI.statusBarLogics.get(logicId);
+                StatusBarLogic logic = null;
+                if (data.has("logic")) {
+                    logic = HotbarAPI.statusBarLogics.get(Identifier.tryParse(data.get("logic").getAsString()));
+                }
 
-                Identifier rendererId = Identifier.tryParse(data.get("renderer").getAsString());
-                StatusBarRenderer renderer = HotbarAPI.statusBarRenderers.get(rendererId);
+                StatusBarRenderer renderer = null;
+                if (data.has("renderer")) {
+                    renderer = HotbarAPI.statusBarRenderers.get(Identifier.tryParse(data.get("renderer").getAsString()));
+                }
+
                 StatusBarRenderer defaultRenderer = new StatusBarRenderer(HotbarAPI.identifierOf("default"), texture, position, direction);
 
                 /*if (replace) {
@@ -107,7 +113,13 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                     gameModes.add(GameMode.ADVENTURE);
                 }
                 if (replace) {
-                    HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaceId));
+                    HotbarAPI.replacedStatusBars.add(replaceId);
+                    //HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaceId));
+                }
+
+
+                for (Identifier replaced : HotbarAPI.replacedStatusBars) {
+                    HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaced));
                 }
 
                 StatusBar newstatus = new StatusBar(barId, renderer == null ? defaultRenderer : renderer.update(position, direction), logic == null ? HotbarAPI.defaultLogic : logic, beforeIds, afterIds, gameModes);
