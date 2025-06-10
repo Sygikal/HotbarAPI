@@ -62,16 +62,18 @@ public class StatusBarOverlayLoader implements SimpleSynchronousResourceReloadLi
 
                 //System.out.println(targetBar.getId());
 
-                Identifier rendererId = Identifier.tryParse(data.get("renderer").getAsString());
-                StatusBarRenderer renderer = HotbarAPI.statusBarRenderers.get(rendererId);
-                StatusBarRenderer defaultRenderer = new StatusBarRenderer(HotbarAPI.identifierOf("default"), texture, targetBar.getRenderer().getPosition(), targetBar.getRenderer().getDirection());
-
-                StatusBarOverlay overlay = new StatusBarOverlay(overlayId, renderer == null ? defaultRenderer : renderer.update(targetBar.getRenderer().getPosition(), targetBar.getRenderer().getDirection()), logic == null ? HotbarAPI.defaultLogic : logic);
                 //HotbarAPI.statusBars.add(newstatus);
-                if (underlay) {
-                    targetBar.addUnderlay(overlay);
-                }else {
-                    targetBar.addOverlay(overlay);
+                if (targetBar != null) {
+                    Identifier rendererId = Identifier.tryParse(data.get("renderer").getAsString());
+                    StatusBarRenderer renderer = HotbarAPI.statusBarRenderers.get(rendererId);
+                    StatusBarRenderer defaultRenderer = new StatusBarRenderer(HotbarAPI.identifierOf("default"), texture, targetBar.getRenderer().getPosition(), targetBar.getRenderer().getDirection());
+
+                    StatusBarOverlay overlay = new StatusBarOverlay(overlayId, renderer == null ? defaultRenderer : renderer.update(targetBar.getRenderer().getPosition(), targetBar.getRenderer().getDirection()), logic == null ? HotbarAPI.defaultLogic : logic);
+                    if (underlay) {
+                        targetBar.addUnderlay(overlay);
+                    }else {
+                        targetBar.addOverlay(overlay);
+                    }
                 }
 
             } catch (IOException e) {
