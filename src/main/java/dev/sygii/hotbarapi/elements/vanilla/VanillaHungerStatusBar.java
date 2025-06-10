@@ -15,14 +15,14 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import squeek.appleskin.client.HUDOverlayHandler;
 
-public class VanillaFoodStatusBar {
+public class VanillaHungerStatusBar {
 
-    public static class VanillaFoodStatusBarRenderer extends StatusBarRenderer {
+    public static class VanillaHungerStatusBarRenderer extends StatusBarRenderer {
 
         private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
 
-        public VanillaFoodStatusBarRenderer() {
-            super(new Identifier("food_renderer"), ICONS, StatusBarRenderer.Position.RIGHT, StatusBarRenderer.Direction.R2L);
+        public VanillaHungerStatusBarRenderer() {
+            super(new Identifier("hunger_renderer"), ICONS, StatusBarRenderer.Position.RIGHT, StatusBarRenderer.Direction.R2L);
         }
 
         @Override

@@ -6,6 +6,6 @@
   "texture": "minecraft:textures/gui/icons.png",
   "position": "RIGHT",
   "direction" : "R2L",
-  "renderer": "minecraft:food_renderer",
+  "renderer": "minecraft:hunger_renderer",
   "logic": "hotbarapi:default"
 }

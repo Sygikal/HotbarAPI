@@ -1,6 +1,6 @@
 {
   "after": [
-    "minecraft:food",
+    "minecraft:hunger",
     "minecraft:mount_health"
   ],
   "texture": "minecraft:textures/gui/icons.png",

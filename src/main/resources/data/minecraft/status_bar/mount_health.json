@@ -1,6 +1,6 @@
 {
   "after": [
-    "minecraft:food"
+    "minecraft:hunger"
   ],
   "before": [
     "minecraft:air"

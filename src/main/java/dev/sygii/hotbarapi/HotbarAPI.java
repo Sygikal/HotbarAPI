@@ -88,7 +88,7 @@ public class HotbarAPI implements ModInitializer {
 		registerStatusBarLogic(new VanillaAirStatusBar.VanillaAirStatusBarLogic());
 		registerStatusBarRenderer(new VanillaArmorStatusBar.VanillaArmorStatusBarRenderer());
 		registerStatusBarLogic(new VanillaArmorStatusBar.VanillaArmorStatusBarLogic());
-		registerStatusBarRenderer(new VanillaFoodStatusBar.VanillaFoodStatusBarRenderer());
+		registerStatusBarRenderer(new VanillaHungerStatusBar.VanillaHungerStatusBarRenderer());
 		registerStatusBarRenderer(new VanillaHealthStatusBar.VanillaHealthStatusBarRenderer());
 		registerStatusBarLogic(new VanillaMountHealthStatusBar.VanillaMountHealthStatusBarLogic());
 		registerStatusBarRenderer(new VanillaMountHealthStatusBar.VanillaMountHealthStatusBarRenderer());
