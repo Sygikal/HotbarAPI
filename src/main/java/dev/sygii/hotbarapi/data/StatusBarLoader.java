@@ -131,14 +131,15 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                         int bar2Index = HotbarAPI.statusBars.indexOf(bar2);
                         if(bar.getBeforeIds().contains(bar2.getId())) {
                             if (barIndex >= bar2Index) {
-                                Collections.swap(HotbarAPI.statusBars, barIndex, bar2Index);
+                                //HotbarAPI.statusBars.set(i, HotbarAPI.statusBars.set(j, HotbarAPI.statusBars.get(i)));
+                                swap(HotbarAPI.statusBars, barIndex, bar2Index);
                                 //HotbarAPI.statusBars.remove(barIndex);
                                 //HotbarAPI.statusBars.add(bar2Index, bar);
                             }
                         }
                         if(bar.getAfterIds().contains(bar2.getId())) {
                             if (barIndex <= bar2Index) {
-                                Collections.swap(HotbarAPI.statusBars, barIndex, bar2Index);
+                                swap(HotbarAPI.statusBars, barIndex, bar2Index);
                                 //HotbarAPI.statusBars.remove(barIndex);
                                 //HotbarAPI.statusBars.add(bar2Index, bar);
                             }
@@ -174,6 +175,14 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static void swap(List<?> list, int i, int j) {
+        // instead of using a raw type here, it's possible to capture
+        // the wildcard but it will require a call to a supplementary
+        // private method
+        final List l = list;
+        l.set(i, l.set(j, l.get(i)));
     }
 
     public static String getBaseName(String filename) {
