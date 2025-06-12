@@ -8,8 +8,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class StatusBar extends HudElement implements Comparable<StatusBar> {
@@ -21,18 +23,20 @@ public class StatusBar extends HudElement implements Comparable<StatusBar> {
     private StatusBarRenderer renderer;
     private final List<Identifier> beforeIds;
     private final List<Identifier> afterIds;
-    private final List<GameMode> gameModes;
+    private final EnumSet<GameMode> gameModes;
     private final List<StatusBarOverlay> overlays = new ArrayList<>();
     private final List<StatusBarOverlay> underlays = new ArrayList<>();
+    private final @Nullable Identifier toReplace;
 
 
-    public StatusBar(Identifier id, StatusBarRenderer renderer, StatusBarLogic logic, List<Identifier> beforeIds, List<Identifier> afterIds, List<GameMode> gameModes) {
+    public StatusBar(Identifier id, StatusBarRenderer renderer, StatusBarLogic logic, List<Identifier> beforeIds, List<Identifier> afterIds, @Nullable Identifier toReplace, EnumSet<GameMode> gameModes) {
         this.id = id;
         this.renderer = renderer;
         this.logic = logic;
         this.beforeIds = beforeIds;
         this.afterIds = afterIds;
         this.gameModes = gameModes;
+        this.toReplace = toReplace;
     }
 
     public void addUnderlay(StatusBarOverlay underlay) {
@@ -49,6 +53,10 @@ public class StatusBar extends HudElement implements Comparable<StatusBar> {
 
     public List<StatusBarOverlay> getOverlays() {
         return overlays;
+    }
+
+    public @Nullable Identifier getReplacing() {
+        return toReplace;
     }
 
     /*public StatusBar(Identifier id, Identifier texture, Position position, Direction direction, StatusBarLogic logic) {
@@ -98,7 +106,7 @@ public class StatusBar extends HudElement implements Comparable<StatusBar> {
         return 10;
     }*/
 
-    public List<GameMode> getGameModes() {
+    public EnumSet<GameMode> getGameModes() {
         return gameModes;
     }
 
