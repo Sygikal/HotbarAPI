@@ -4,11 +4,19 @@ import dev.sygii.hotbarapi.HotbarAPI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+//? if >1.21.1
+/*import net.minecraft.client.render.RenderLayer;*/
 
 public class StatusBarRenderer {
     private final Identifier id;
-    private final Identifier texture;
+    private Identifier texture;
     private Position position;
     private Direction direction;
 
@@ -19,11 +27,14 @@ public class StatusBarRenderer {
         this.direction = direction;
     }
 
-    public StatusBarRenderer update(Position position, Direction direction) {
+    public StatusBarRenderer update(Identifier texture, Position position, Direction direction) {
         this.setPosition(position);
         this.setDirection(direction);
+        this.setTexture(texture);
         return this;
     }
+
+    private void setTexture(Identifier texture) {  this.texture = texture; }
 
     private void setPosition(Position position) {
         this.position = position;
@@ -47,18 +58,29 @@ public class StatusBarRenderer {
         float apparition = max / scale;
         for(int w = 0; w < scale; ++w) {
             int xPosition = x + (getDirection().equals(Direction.L2R) ? (getPosition().equals(Position.RIGHT) ? -72 : 0) + w * 8 : (getPosition().equals(Position.LEFT) ? 72 : 0) + -(w * 8));
+            //? if =1.20.1 {
             context.drawTexture(getTexture(), xPosition, y, 0, 0, 9, 9, 27, 9);
-
+            //?} else {
+            /*context.drawTexture(RenderLayer::getGuiTexturedOverlay, getTexture(), xPosition, y, 0, 0, 9, 9, 27, 9);
+            *///?}
             float prevasd = w * apparition;
             float asd = (w + 1) * apparition;
             float sex = (asd) - (apparition / 2);
 
             if (current > sex) {
+                //? if =1.20.1 {
                 context.drawTexture(getTexture(), xPosition, y, 9, 0, 9, 9, 27, 9);
+                 //?} else {
+                /*context.drawTexture(RenderLayer::getGuiTexturedOverlay, getTexture(), xPosition, y, 9, 0, 9, 9, 27, 9);
+                *///?}
             }
 
             if (current > prevasd && current <= sex) {
+                //? if =1.20.1 {
                 context.drawTexture(getTexture(), xPosition, y, 18, 0, 9, 9, 27, 9);
+                 //?} else {
+                /*context.drawTexture(RenderLayer::getGuiTexturedOverlay, getTexture(), xPosition, y, 18, 0, 9, 9, 27, 9);
+                *///?}
             }
         }
     }

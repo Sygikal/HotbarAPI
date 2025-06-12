@@ -13,19 +13,31 @@ import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
+//? if >1.21.1
+/*import net.minecraft.client.render.RenderLayer;*/
+
 public class VanillaArmorStatusBar {
 
     public static class VanillaArmorStatusBarRenderer extends StatusBarRenderer {
 
+        //? if =1.20.1 {
         private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
+        private static final Identifier ID = new Identifier("armor_renderer");
+        //?} else {
+        /*private static final Identifier ICONS = null;
+        private static final Identifier ARMOR_EMPTY_TEXTURE = Identifier.ofVanilla("hud/armor_empty");
+        private static final Identifier ARMOR_HALF_TEXTURE = Identifier.ofVanilla("hud/armor_half");
+        private static final Identifier ARMOR_FULL_TEXTURE = Identifier.ofVanilla("hud/armor_full");
+        private static final Identifier ID = Identifier.ofVanilla("armor_renderer");
+        *///?}
 
         public VanillaArmorStatusBarRenderer() {
-            super(new Identifier("armor_renderer"), ICONS, StatusBarRenderer.Position.LEFT, StatusBarRenderer.Direction.L2R);
+            super(ID, ICONS, StatusBarRenderer.Position.LEFT, StatusBarRenderer.Direction.L2R);
         }
 
         @Override
         public void render(MinecraftClient client, DrawContext context, PlayerEntity playerEntity, int xPosition, int yPosition, StatusBarLogic logic) {
-            //System.out.println(this.getPosition());
+            //? if =1.20.1 {
             float f = Math.max((float)playerEntity.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH), (float)Math.max(client.inGameHud.renderHealthValue, MathHelper.ceil(playerEntity.getHealth())));
             int p = MathHelper.ceil(playerEntity.getAbsorptionAmount());
             int q = MathHelper.ceil((f + (float)p) / 2.0F / 10.0F);
@@ -49,18 +61,47 @@ public class VanillaArmorStatusBar {
                     }
                 }
             }
+            //?} else {
+            /*int l = playerEntity.getArmor();
+            if (l > 0) {
+                //int m = i - (j - 1) * k - 10;
+                int m = yPosition;
+
+                for(int n = 0; n < 10; ++n) {
+                    int o = xPosition + n * 8;
+                    if (n * 2 + 1 < l) {
+                        context.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_FULL_TEXTURE, o, m, 9, 9);
+                    }
+
+                    if (n * 2 + 1 == l) {
+                        context.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_HALF_TEXTURE, o, m, 9, 9);
+                    }
+
+                    if (n * 2 + 1 > l) {
+                        context.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_EMPTY_TEXTURE, o, m, 9, 9);
+                    }
+                }
+
+            }
+            *///?}
         }
     }
 
     public static class VanillaArmorStatusBarLogic extends StatusBarLogic {
 
+        //? if =1.20.1 {
+        private static final Identifier ID = new Identifier("armor_logic");
+         //?} else {
+        /*private static final Identifier ID = Identifier.ofVanilla("armor_logic");
+        *///?}
+
         public VanillaArmorStatusBarLogic() {
-            super(new Identifier("armor_logic"), (ent) -> 0, (ent) -> 0);
+            super(ID, (ent) -> 0, (ent) -> 0);
         }
 
         @Override
         public boolean isVisible(MinecraftClient client, PlayerEntity playerEntity) {
-            return playerEntity.getArmor() > 1;
+            return playerEntity.getArmor() > 0;
         }
     }
 }
