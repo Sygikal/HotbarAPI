@@ -7,6 +7,7 @@ import dev.sygii.hotbarapi.HotbarAPI;
 import dev.sygii.hotbarapi.elements.StatusBar;
 import dev.sygii.hotbarapi.elements.StatusBarLogic;
 import dev.sygii.hotbarapi.elements.StatusBarRenderer;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -28,19 +29,14 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
 
     @Override
     public void reload(ResourceManager manager) {
-        HotbarAPI.statusBars.clear();
-        HotbarAPI.replacedStatusBars.clear();
+        //HotbarAPI.statusBars.clear();
+        //HotbarAPI.replacedStatusBars.clear();
+        HotbarAPI.serverRegisteredStatusBars.clear();
         manager.findResources("status_bar", id -> id.getPath().endsWith(".json")).forEach((id, resourceRef) -> {
             try {
                 InputStream stream = null;
                 stream = resourceRef.getInputStream();
                 JsonObject data = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
-
-                int index = -1;
-                if (data.has("index")) {
-                    index = data.get("index").getAsInt();
-
-                }
 
                 String statusBarId = getBaseName(id.getPath());
                 List<Identifier> beforeIds = new ArrayList<>();
@@ -59,30 +55,26 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                     //beforeIds = Identifier.tryParse(data.get("before").getAsString());
                 }
 
-                Identifier replaceId;
+                Identifier replaceId = HotbarAPI.NULL_STATUS_BAR_REPLACEMENT;
                 boolean replace = false;
                 if (data.has("replace")) {
                     replace = true;
                     replaceId = Identifier.tryParse(data.get("replace").getAsString());
-                } else {
-                    replaceId = null;
                 }
                 Identifier texture = Identifier.tryParse(data.get("texture").getAsString());
                 Identifier barId = Identifier.of(id.getNamespace(), statusBarId);
                 StatusBarRenderer.Direction direction = StatusBarRenderer.Direction.valueOf(data.get("direction").getAsString().toUpperCase());
                 StatusBarRenderer.Position position = StatusBarRenderer.Position.valueOf(data.get("position").getAsString().toUpperCase());
 
-                StatusBarLogic logic = null;
-                if (data.has("logic")) {
+                StatusBarLogic logic = HotbarAPI.DEFAULT_STATUS_BAR_LOGIC;
+                if (data.has("logic") && HotbarAPI.statusBarLogics.get(Identifier.tryParse(data.get("logic").getAsString())) != null) {
                     logic = HotbarAPI.statusBarLogics.get(Identifier.tryParse(data.get("logic").getAsString()));
                 }
 
-                StatusBarRenderer renderer = null;
-                if (data.has("renderer")) {
+                StatusBarRenderer renderer = HotbarAPI.DEFAULT_STATUS_BAR_RENDERER;
+                if (data.has("renderer") && HotbarAPI.statusBarRenderers.get(Identifier.tryParse(data.get("renderer").getAsString())) != null) {
                     renderer = HotbarAPI.statusBarRenderers.get(Identifier.tryParse(data.get("renderer").getAsString()));
                 }
-
-                StatusBarRenderer defaultRenderer = new StatusBarRenderer(HotbarAPI.identifierOf("default"), texture, position, direction);
 
                 /*if (replace) {
                     HotbarAPI.replaceStatusBar(replaceId, new StatusBar(barId, renderer == null ? defaultRenderer : renderer, logic == null ? HotbarAPI.defaultLogic : logic, important));
@@ -99,7 +91,8 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                     HotbarAPI.addStatusBar(new StatusBar(barId, renderer == null ? defaultRenderer : renderer, logic == null ? HotbarAPI.defaultLogic : logic, beforeIds, afterIds, important));
                 }*/
 
-                List<GameMode> gameModes = new ArrayList<>();
+                EnumSet<GameMode> gameModes = EnumSet.noneOf(GameMode.class);
+                //List<GameMode> gameModes = new ArrayList<>();
                 if (data.has("gamemodes")) {
                     for (JsonElement elem : data.getAsJsonArray("gamemodes")) {
                         gameModes.add(GameMode.valueOf(elem.getAsString().toUpperCase()));
@@ -109,21 +102,23 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                     gameModes.add(GameMode.ADVENTURE);
                 }
                 if (replace) {
-                    HotbarAPI.replacedStatusBars.add(replaceId);
+                    //HotbarAPI.replacedStatusBars.add(replaceId);
                     //HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaceId));
                 }
 
 
                 for (Identifier replaced : HotbarAPI.replacedStatusBars) {
-                    HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaced));
+                    //HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaced));
                 }
 
-                StatusBar newstatus = new StatusBar(barId, renderer == null ? defaultRenderer : renderer.update(position, direction), logic == null ? HotbarAPI.defaultLogic : logic, beforeIds, afterIds, gameModes);
-                HotbarAPI.statusBars.add(newstatus);
+
+                StatusBar newstatus = new StatusBar(barId, renderer.update(texture, position, direction), logic, beforeIds, afterIds, replaceId, gameModes);
+                HotbarAPI.serverRegisteredStatusBars.add(newstatus);
+                //HotbarAPI.statusBars.add(newstatus);
 
                 //HotbarAPI.statusBars.sort(StatusBar::compareTo);
 
-                for (Iterator<StatusBar> it = HotbarAPI.statusBars.iterator(); it.hasNext();) {
+                /*for (Iterator<StatusBar> it = HotbarAPI.statusBars.iterator(); it.hasNext();) {
                     StatusBar bar = it.next();
                     int barIndex = HotbarAPI.statusBars.indexOf(bar);
                     for (Iterator<StatusBar> it2 = HotbarAPI.statusBars.iterator(); it2.hasNext();) {
@@ -145,7 +140,7 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                             }
                         }
                     }
-                }
+                }*/
 
                 /*for (StatusBar bar : HotbarAPI.statusBars) {
                     int barIndex = HotbarAPI.statusBars.indexOf(bar);

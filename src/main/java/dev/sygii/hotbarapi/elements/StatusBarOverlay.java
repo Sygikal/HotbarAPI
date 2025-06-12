@@ -8,13 +8,25 @@ import java.util.List;
 
 public class StatusBarOverlay extends HudElement {
     private final Identifier id;
+    private final Identifier targetBar;
     private StatusBarLogic logic;
     private StatusBarRenderer renderer;
+    private final boolean underlay;
 
-    public StatusBarOverlay(Identifier id, StatusBarRenderer renderer, StatusBarLogic logic) {
+    public StatusBarOverlay(Identifier id, Identifier targetBar, StatusBarRenderer renderer, StatusBarLogic logic, boolean underlay) {
         this.id = id;
+        this.targetBar = targetBar;
         this.renderer = renderer;
         this.logic = logic;
+        this.underlay = underlay;
+    }
+
+    public Identifier getTarget() {
+        return this.targetBar;
+    }
+
+    public boolean isUnderlay() {
+        return this.underlay;
     }
 
     public StatusBarRenderer getRenderer() {
