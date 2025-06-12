@@ -18,6 +18,8 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
+//? if >=1.21.1
+/*import net.minecraft.util.profiler.Profilers;*/
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -43,23 +45,24 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
     @Shadow
     @Mutable
     @Final
-    private static Identifier WIDGETS_TEXTURE;
-
-    @Shadow
-    @Mutable
-    @Final
     private Random random;
 
     @Shadow
     @Mutable
     private int ticks;
 
+    //? if =1.20.1 {
+    @Shadow
+    @Mutable
+    @Final
+    private static Identifier WIDGETS_TEXTURE;
     @Shadow
     @Mutable
     private int scaledWidth;
     @Shadow
     @Mutable
     private int scaledHeight;
+    //?}
 
     @Shadow public abstract TextRenderer getTextRenderer();
 
@@ -149,10 +152,7 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
     }*/
 
 
-    @ModifyExpressionValue(
-            method = "renderHeldItemTooltip",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;hasStatusBars()Z")
-    )
+    @ModifyExpressionValue(method = "renderHeldItemTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;hasStatusBars()Z"))
     private boolean updateItemTooltipHeight(boolean original) {
         return true;
     }
@@ -167,7 +167,11 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         return original + 19 - offset;
     }
 
+    //? if =1.20.1 {
     @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", ordinal = 0), index = 1)
+     //?} else {
+    /*@ModifyArg(method = "renderOverlayMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"), index = 1)
+    *///?}
     private float changeActionBarHeight(float og) {
         PlayerEntity playerEntity = this.getCameraPlayer();
         int offset = 0;
@@ -177,14 +181,16 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         return og + 19 - offset;
     }
 
-    @ModifyExpressionValue(
-            method = "render",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;hasStatusBars()Z")
-    )
+    //? if =1.20.1 {
+    @ModifyExpressionValue(method = "render",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;hasStatusBars()Z"))
+     //?} else {
+    /*@ModifyExpressionValue(method = "renderMainHud",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;hasStatusBars()Z"))
+    *///?}
     private boolean hasStatusBars(boolean original) {
         return true;
     }
 
+    //? if =1.20.1 {
     @Inject(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"))
     private void resetHotBarColor(float tickDelta, DrawContext context, CallbackInfo ci, @Local PlayerEntity playerEntity) {
         for (Iterator<Map.Entry<Integer, HotbarHighlight>> it = HotbarAPI.mappedHotbarHighlights.entrySet().iterator(); it.hasNext();) {
@@ -210,25 +216,27 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         }
         ColorUtil.setColor(context, -1);
     }
-
-    @Unique
-    public void setHighlightedSlotAndColor(int slot, Color color) {
-        highlightedSlot = slot;
-        if (color != null) {
-            highlightedSlotColor = color;
-        }
-    }
+    //?}
 
     @Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", ordinal = 2))
     private void addBars(DrawContext context, CallbackInfo ci, @Local PlayerEntity playerEntity, @Local(ordinal = 3) int m, @Local(ordinal = 4) int n, @Local(ordinal = 5) int o) {
 
         for (StatusBar statusBar : HotbarAPI.statusBars) {
+            //? if =1.20.1 {
             this.client.getProfiler().swap(statusBar.getId().toString());
+             //?} else {
+            /*Profilers.get().swap(statusBar.getId().toString());
+            *///?}
 
             if (statusBar.getLogic().isVisible(client, playerEntity) && statusBar.getGameModes().contains(client.interactionManager.getCurrentGameMode())) {
                 //statusBar.renderStatusBar(client, context, playerEntity, scaledWidth / 2 - 91, scaledWidth / 2 + 91, scaledHeight - 39);
+                //? if =1.20.1 {
                 int xPos = statusBar.getRenderer().getPosition().equals(StatusBarRenderer.Position.LEFT) ? scaledWidth / 2 - 91 : scaledWidth / 2 + 91 - 9;
                 int yPos = (int) (scaledHeight - 39 - HotbarAPI.getHeightOffest(client, statusBar, playerEntity));
+                 //?} else {
+                /*int xPos = statusBar.getRenderer().getPosition().equals(StatusBarRenderer.Position.LEFT) ? context.getScaledWindowWidth() / 2 - 91 : context.getScaledWindowWidth() / 2 + 91 - 9;
+                int yPos = (int) (context.getScaledWindowHeight() - 39 - HotbarAPI.getHeightOffest(client, statusBar, playerEntity));
+                *///?}
 
                 if (!statusBar.getUnderlays().isEmpty()) {
                     for (StatusBarOverlay underlay : statusBar.getUnderlays()) {
@@ -264,10 +272,11 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         }
     }*/
 
-    @WrapWithCondition(
-            method = "render",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderMountHealth(Lnet/minecraft/client/gui/DrawContext;)V")
-    )
+    //? if =1.20.1 {
+    @WrapWithCondition(method = "render",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderMountHealth(Lnet/minecraft/client/gui/DrawContext;)V"))
+    //?} else {
+    /*@WrapWithCondition(method = "renderMainHud",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderMountHealth(Lnet/minecraft/client/gui/DrawContext;)V"))
+    *///?}
     private boolean onlyRenderIfAllowed(InGameHud instance, DrawContext context) {
         return false;
     }
@@ -288,6 +297,7 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         return 1;
     }
 
+    //? if =1.20.1 {
     @ModifyExpressionValue(
             method = "renderStatusBars",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getMaxAir()I")
@@ -296,6 +306,7 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         return -999;
     }
 
+     
     @ModifyExpressionValue(
             method = "renderStatusBars",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getArmor()I")
@@ -310,5 +321,28 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
     )
     private boolean isSubmergedIn(boolean original) {
         return false;
+    }
+    //?} else {
+    /*@WrapWithCondition(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderArmor(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;IIII)V"))
+    private boolean onlyRenderIfAllowed(DrawContext context, PlayerEntity player, int i, int j, int k, int x) {
+        return false;
+    }
+
+    @WrapWithCondition(method = "renderStatusBars",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderFood(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;II)V"))
+    private boolean onlyRenderIfAllowed(InGameHud instance, DrawContext context, PlayerEntity player, int top, int right) {
+        return false;
+    }
+
+    @WrapWithCondition(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderAirBubbles(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;III)V"))
+    private boolean onlyRenderIfAllowed(InGameHud instance, DrawContext context, PlayerEntity player, int heartCount, int top, int left) {
+        return false;
+    }
+    *///?}
+    @Unique
+    public void setHighlightedSlotAndColor(int slot, Color color) {
+        highlightedSlot = slot;
+        if (color != null) {
+            highlightedSlotColor = color;
+        }
     }
 }

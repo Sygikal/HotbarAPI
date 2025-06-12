@@ -21,14 +21,14 @@
           "dev.sygii.hotbarapi.HotbarAPI"
 		]
 	},
-	"accessWidener": "hotbarapi.accesswidener",
+	"accessWidener": "${aw}",
 	"mixins": [
 		"hotbarapi.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.20.1",
-		"java": ">=17",
+		"minecraft": "${mcdep}",
+		"java": "${javadep}",
 		"fabric-api": "*"
 	},
 	"suggests": {

@@ -1,5 +1,6 @@
 package dev.sygii.hotbarapi.util;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.ColorHelper;
 
@@ -8,7 +9,12 @@ import java.awt.*;
 public class ColorUtil {
 
     public static void setColor(DrawContext context, int hex) {
-        context.setShaderColor(ColorHelper.Argb.getRed(hex) / 255.0F, ColorHelper.Argb.getGreen(hex) / 255.0F, ColorHelper.Argb.getBlue(hex) / 255.0F, ColorHelper.Argb.getAlpha(hex) / 255.0F);
+        //? if =1.20.1 {
+        RenderSystem.setShaderColor(ColorHelper.Argb.getRed(hex) / 255.0F, ColorHelper.Argb.getGreen(hex) / 255.0F, ColorHelper.Argb.getBlue(hex) / 255.0F, ColorHelper.Argb.getAlpha(hex) / 255.0F);
+        //?} else {
+        /*RenderSystem.setShaderColor(ColorHelper.getRed(hex) / 255.0F, ColorHelper.getGreen(hex) / 255.0F, ColorHelper.getBlue(hex) / 255.0F, ColorHelper.getAlpha(hex) / 255.0F);
+        *///?}
+        //context.setShaderColor(ColorHelper.Argb.getRed(hex) / 255.0F, ColorHelper.Argb.getGreen(hex) / 255.0F, ColorHelper.Argb.getBlue(hex) / 255.0F, ColorHelper.Argb.getAlpha(hex) / 255.0F);
     }
 
     public static int fade(int color1, int color2, float offset) {

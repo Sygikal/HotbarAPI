@@ -1,11 +1,14 @@
 package dev.sygii.hotbarapi.util;
 
+//? if =1.20.1
 import com.mojang.blaze3d.platform.GlStateManager;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import org.lwjgl.opengl.GL11;
 
 public class RenderUtil {
 
+    //? if =1.20.1 {
     private boolean needDisableBlend = false;
 
     private void enableAlpha(float alpha)
@@ -22,5 +25,5 @@ public class RenderUtil {
         if (needDisableBlend)
             RenderSystem.disableBlend();
     }
-
+    //?}
 }
