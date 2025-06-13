@@ -1,0 +1,10 @@
+{
+  "before": [
+    "minecraft:air",
+    "minecraft:mount_health"
+  ],
+  "texture": "minecraft:textures/gui/icons.png",
+  "position": "RIGHT",
+  "direction" : "R2L",
+  "renderer": "minecraft:hunger_renderer"
+}
