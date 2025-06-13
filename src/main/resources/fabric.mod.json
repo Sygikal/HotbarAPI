@@ -19,6 +19,9 @@
 	"entrypoints": {
 		"main": [
           "dev.sygii.hotbarapi.HotbarAPI"
+		],
+		"client": [
+			"dev.sygii.hotbarapi.HotbarAPIClient"
 		]
 	},
 	"accessWidener": "${aw}",
