@@ -1,13 +1,11 @@
-package dev.sygii.hotbarapi.data;
+package dev.sygii.hotbarapi.data.server;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.sygii.hotbarapi.HotbarAPI;
-import dev.sygii.hotbarapi.elements.StatusBar;
-import dev.sygii.hotbarapi.elements.StatusBarLogic;
 import dev.sygii.hotbarapi.elements.StatusBarRenderer;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import dev.sygii.hotbarapi.network.StatusBarS2CPacket;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -20,18 +18,19 @@ import java.io.InputStreamReader;
 import java.util.*;
 import java.util.List;
 
-public class StatusBarLoader implements SimpleSynchronousResourceReloadListener {
+public class ServerStatusBarLoader implements SimpleSynchronousResourceReloadListener {
 
     @Override
     public Identifier getFabricId() {
-        return HotbarAPI.identifierOf("status_bar_loader");
+        return HotbarAPI.identifierOf("server_status_bar_loader");
     }
 
     @Override
     public void reload(ResourceManager manager) {
         //HotbarAPI.statusBars.clear();
         //HotbarAPI.replacedStatusBars.clear();
-        HotbarAPI.serverRegisteredStatusBars.clear();
+        //HotbarAPI.serverRegisteredStatusBars.clear();
+        HotbarAPI.statusBarPacketQueue.clear();
         manager.findResources("status_bar", id -> id.getPath().endsWith(".json")).forEach((id, resourceRef) -> {
             try {
                 InputStream stream = null;
@@ -66,7 +65,7 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                 StatusBarRenderer.Direction direction = StatusBarRenderer.Direction.valueOf(data.get("direction").getAsString().toUpperCase());
                 StatusBarRenderer.Position position = StatusBarRenderer.Position.valueOf(data.get("position").getAsString().toUpperCase());
 
-                StatusBarLogic logic = HotbarAPI.DEFAULT_STATUS_BAR_LOGIC;
+                /*StatusBarLogic logic = HotbarAPI.DEFAULT_STATUS_BAR_LOGIC;
                 if (data.has("logic") && HotbarAPI.statusBarLogics.get(Identifier.tryParse(data.get("logic").getAsString())) != null) {
                     logic = HotbarAPI.statusBarLogics.get(Identifier.tryParse(data.get("logic").getAsString()));
                 }
@@ -74,6 +73,16 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                 StatusBarRenderer renderer = HotbarAPI.DEFAULT_STATUS_BAR_RENDERER;
                 if (data.has("renderer") && HotbarAPI.statusBarRenderers.get(Identifier.tryParse(data.get("renderer").getAsString())) != null) {
                     renderer = HotbarAPI.statusBarRenderers.get(Identifier.tryParse(data.get("renderer").getAsString()));
+                }*/
+
+                Identifier logicId = HotbarAPI.DEFAULT_STATUS_BAR_LOGIC.getId();
+                if (data.has("logic")) {
+                    logicId = Identifier.tryParse(data.get("logic").getAsString());
+                }
+
+                Identifier rendererId = HotbarAPI.DEFAULT_STATUS_BAR_RENDERER.getId();
+                if (data.has("renderer")) {
+                    rendererId = Identifier.tryParse(data.get("renderer").getAsString());
                 }
 
                 /*if (replace) {
@@ -107,13 +116,16 @@ public class StatusBarLoader implements SimpleSynchronousResourceReloadListener 
                 }
 
 
-                for (Identifier replaced : HotbarAPI.replacedStatusBars) {
+                /*for (Identifier replaced : HotbarAPI.replacedStatusBars) {
                     //HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaced));
-                }
+                }*/
 
 
-                StatusBar newstatus = new StatusBar(barId, renderer.update(texture, position, direction), logic, beforeIds, afterIds, replaceId, gameModes);
-                HotbarAPI.serverRegisteredStatusBars.add(newstatus);
+                //StatusBar newstatus = new StatusBar(barId, renderer.update(texture, position, direction), logic, beforeIds, afterIds, replaceId, gameModes);
+                //HotbarAPI.serverRegisteredStatusBars.add(newstatus);
+
+
+                HotbarAPI.statusBarPacketQueue.add(new StatusBarS2CPacket(barId, beforeIds, afterIds, replaceId, texture, direction, position, logicId, rendererId, gameModes));
                 //HotbarAPI.statusBars.add(newstatus);
 
                 //HotbarAPI.statusBars.sort(StatusBar::compareTo);

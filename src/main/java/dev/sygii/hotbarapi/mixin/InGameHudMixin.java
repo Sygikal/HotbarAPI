@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.sygii.hotbarapi.HotbarAPI;
+import dev.sygii.hotbarapi.HotbarAPIClient;
 import dev.sygii.hotbarapi.elements.HotbarHighlight;
 import dev.sygii.hotbarapi.elements.StatusBar;
 import dev.sygii.hotbarapi.access.InGameHudAccessor;
@@ -162,7 +163,7 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         PlayerEntity playerEntity = this.getCameraPlayer();
         int offset = 0;
         if (playerEntity != null) {
-            offset = Math.round(HotbarAPI.getMaxStatusHeight(client, playerEntity));
+            offset = Math.round(HotbarAPIClient.getMaxStatusHeight(client, playerEntity));
         }
         return original + 19 - offset;
     }
@@ -176,7 +177,7 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         PlayerEntity playerEntity = this.getCameraPlayer();
         int offset = 0;
         if (playerEntity != null) {
-            offset = Math.round(HotbarAPI.getMaxStatusHeight(client, playerEntity));
+            offset = Math.round(HotbarAPIClient.getMaxStatusHeight(client, playerEntity));
         }
         return og + 19 - offset;
     }
@@ -221,7 +222,7 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
     @Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", ordinal = 2))
     private void addBars(DrawContext context, CallbackInfo ci, @Local PlayerEntity playerEntity, @Local(ordinal = 3) int m, @Local(ordinal = 4) int n, @Local(ordinal = 5) int o) {
 
-        for (StatusBar statusBar : HotbarAPI.statusBars) {
+        for (StatusBar statusBar : HotbarAPIClient.statusBars) {
             //? if =1.20.1 {
             this.client.getProfiler().swap(statusBar.getId().toString());
              //?} else {
@@ -232,10 +233,10 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
                 //statusBar.renderStatusBar(client, context, playerEntity, scaledWidth / 2 - 91, scaledWidth / 2 + 91, scaledHeight - 39);
                 //? if =1.20.1 {
                 int xPos = statusBar.getRenderer().getPosition().equals(StatusBarRenderer.Position.LEFT) ? scaledWidth / 2 - 91 : scaledWidth / 2 + 91 - 9;
-                int yPos = (int) (scaledHeight - 39 - HotbarAPI.getHeightOffest(client, statusBar, playerEntity));
+                int yPos = (int) (scaledHeight - 39 - HotbarAPIClient.getHeightOffest(client, statusBar, playerEntity));
                  //?} else {
                 /*int xPos = statusBar.getRenderer().getPosition().equals(StatusBarRenderer.Position.LEFT) ? context.getScaledWindowWidth() / 2 - 91 : context.getScaledWindowWidth() / 2 + 91 - 9;
-                int yPos = (int) (context.getScaledWindowHeight() - 39 - HotbarAPI.getHeightOffest(client, statusBar, playerEntity));
+                int yPos = (int) (context.getScaledWindowHeight() - 39 - HotbarAPIClient.getHeightOffest(client, statusBar, playerEntity));
                 *///?}
 
                 if (!statusBar.getUnderlays().isEmpty()) {
