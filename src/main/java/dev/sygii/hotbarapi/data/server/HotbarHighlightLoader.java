@@ -1,11 +1,10 @@
-package dev.sygii.hotbarapi.data;
+package dev.sygii.hotbarapi.data.server;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.sygii.hotbarapi.HotbarAPI;
 import dev.sygii.hotbarapi.elements.HotbarHighlight;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
