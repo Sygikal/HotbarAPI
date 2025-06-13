@@ -1,15 +1,12 @@
 package dev.sygii.hotbarapi.network;
 
 import dev.sygii.hotbarapi.HotbarAPI;
-import dev.sygii.hotbarapi.elements.StatusBarRenderer;
+import net.minecraft.util.Identifier;
+
+//? if =1.20.1 {
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.GameMode;
-
-import java.util.EnumSet;
-import java.util.List;
 
 public class ResetStatusBarsS2CPacket implements FabricPacket {
     public static final Identifier PACKET_ID = HotbarAPI.identifierOf( "reset_status_bars_packet");
@@ -35,3 +32,21 @@ public class ResetStatusBarsS2CPacket implements FabricPacket {
         return TYPE;
     }
 }
+//?} else {
+/*import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
+
+public record ResetStatusBarsS2CPacket() implements CustomPayload {
+    public static final CustomPayload.Id<ResetStatusBarsS2CPacket> PACKET_ID = new CustomPayload.Id<>(HotbarAPI.identifierOf("reset_status_bars_packet"));
+
+    public static final PacketCodec<RegistryByteBuf, ResetStatusBarsS2CPacket> PACKET_CODEC = PacketCodec.of((value, buf) -> {
+    }, buf -> new ResetStatusBarsS2CPacket());
+
+
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return PACKET_ID;
+    }
+}
+*///?}

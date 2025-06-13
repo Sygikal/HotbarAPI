@@ -1,15 +1,12 @@
 package dev.sygii.hotbarapi.network;
 
 import dev.sygii.hotbarapi.HotbarAPI;
-import dev.sygii.hotbarapi.elements.StatusBarRenderer;
+import net.minecraft.util.Identifier;
+
+//? if =1.20.1 {
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.GameMode;
-
-import java.util.EnumSet;
-import java.util.List;
 
 public class StatusBarOverlayS2CPacket implements FabricPacket {
     public static final Identifier PACKET_ID = HotbarAPI.identifierOf( "register_status_bar_overlay_packet");
@@ -25,27 +22,27 @@ public class StatusBarOverlayS2CPacket implements FabricPacket {
     protected final Identifier overlayRendererId;
     protected final boolean underlay;
 
-    public Identifier getStatusBarOverlayId() {
+    public Identifier statusBarOverlayId() {
         return statusBarOverlayId;
     }
 
-    public Identifier getTargetId() {
+    public Identifier targetId() {
         return targetId;
     }
 
-    public Identifier getTexture() {
+    public Identifier texture() {
         return texture;
     }
 
-    public Identifier getOverlayLogicId() {
+    public Identifier overlayLogicId() {
         return overlayLogicId;
     }
 
-    public Identifier getOverlayRendererId() {
+    public Identifier overlayRendererId() {
         return overlayRendererId;
     }
 
-    public boolean isUnderlay() {
+    public boolean underlay() {
         return underlay;
     }
 
@@ -77,3 +74,28 @@ public class StatusBarOverlayS2CPacket implements FabricPacket {
         return TYPE;
     }
 }
+//?} else {
+/*import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
+
+
+public record StatusBarOverlayS2CPacket(Identifier statusBarOverlayId, Identifier targetId, Identifier texture,
+                                        Identifier overlayLogicId, Identifier overlayRendererId, boolean underlay) implements CustomPayload {
+    public static final CustomPayload.Id<StatusBarOverlayS2CPacket> PACKET_ID = new CustomPayload.Id<>(HotbarAPI.identifierOf("register_status_bar_overlay_packet"));
+
+    public static final PacketCodec<RegistryByteBuf, StatusBarOverlayS2CPacket> PACKET_CODEC = PacketCodec.of((value, buf) -> {
+        buf.writeIdentifier(value.statusBarOverlayId);
+        buf.writeIdentifier(value.targetId);
+        buf.writeIdentifier(value.texture);
+        buf.writeIdentifier(value.overlayLogicId);
+        buf.writeIdentifier(value.overlayRendererId);
+        buf.writeBoolean(value.underlay);
+    }, buf -> new StatusBarOverlayS2CPacket(buf.readIdentifier(), buf.readIdentifier(), buf.readIdentifier(), buf.readIdentifier(), buf.readIdentifier(), buf.readBoolean()));
+
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return PACKET_ID;
+    }
+}
+*///?}

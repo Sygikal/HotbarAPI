@@ -2,15 +2,15 @@ package dev.sygii.hotbarapi.network;
 
 import dev.sygii.hotbarapi.HotbarAPI;
 import dev.sygii.hotbarapi.elements.StatusBarRenderer;
-import net.fabricmc.fabric.api.networking.v1.FabricPacket;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
-
+import net.minecraft.network.PacketByteBuf;
 import java.util.EnumSet;
 import java.util.List;
+
+//? if =1.20.1 {
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
 
 public class StatusBarS2CPacket implements FabricPacket {
     public static final Identifier PACKET_ID = HotbarAPI.identifierOf( "register_status_bar_packet");
@@ -106,3 +106,33 @@ public class StatusBarS2CPacket implements FabricPacket {
         return TYPE;
     }
 }
+//?} else {
+/*import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
+
+public record StatusBarS2CPacket(Identifier statusBarId, List<Identifier> beforeIds, List<Identifier> afterIds, Identifier toReplace,
+                                 Identifier texture, StatusBarRenderer.Direction direction, StatusBarRenderer.Position position,
+                                 Identifier statusBarLogicId, Identifier statusBarRendererId, EnumSet<GameMode> gameModes) implements CustomPayload {
+
+    public static final CustomPayload.Id<StatusBarS2CPacket> PACKET_ID = new CustomPayload.Id<>(HotbarAPI.identifierOf("register_status_bar_packet"));
+
+    public static final PacketCodec<RegistryByteBuf, StatusBarS2CPacket> PACKET_CODEC = PacketCodec.of((value, buf) -> {
+        buf.writeIdentifier(value.statusBarId);
+        buf.writeCollection(value.beforeIds,  PacketByteBuf::writeIdentifier);
+        buf.writeCollection(value.afterIds,  PacketByteBuf::writeIdentifier);
+        buf.writeIdentifier(value.toReplace);
+        buf.writeIdentifier(value.texture);
+        buf.writeEnumConstant(value.direction);
+        buf.writeEnumConstant(value.position);
+        buf.writeIdentifier(value.statusBarLogicId);
+        buf.writeIdentifier(value.statusBarRendererId);
+        buf.writeEnumSet(value.gameModes, GameMode.class);
+    }, buf -> new StatusBarS2CPacket(buf.readIdentifier(), buf.readList(PacketByteBuf::readIdentifier), buf.readList(PacketByteBuf::readIdentifier), buf.readIdentifier(), buf.readIdentifier(), buf.readEnumConstant(StatusBarRenderer.Direction.class), buf.readEnumConstant(StatusBarRenderer.Position.class), buf.readIdentifier(), buf.readIdentifier(), buf.readEnumSet(GameMode.class)));
+
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return PACKET_ID;
+    }
+}
+*///?}
