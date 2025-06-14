@@ -22,7 +22,7 @@ repositories {
 	maven { url "https://maven.ryanliptak.com/" }
 }
 
-def awFile = stonecutter.eval(mcVersion, "=1.20.1") ? '1.20.1.accesswidener' : stonecutter.eval(mcVersion, "=1.21.1") ? '1.21.1.accesswidener' : '1.21.5.accesswidener'
+def awFile = "${mcVersion}.accesswidener"
 
 loom {
 	accessWidenerPath = file("../../src/main/resources/${awFile}")
