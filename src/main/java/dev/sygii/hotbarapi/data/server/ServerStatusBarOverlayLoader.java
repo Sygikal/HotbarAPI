@@ -14,16 +14,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class StatusBarOverlayLoader implements SimpleSynchronousResourceReloadListener {
+public class ServerStatusBarOverlayLoader implements SimpleSynchronousResourceReloadListener {
 
     @Override
     public Identifier getFabricId() {
-        return HotbarAPI.identifierOf("status_bar_overlay_loader");
+        return HotbarAPI.identifierOf("server_status_bar_overlay_loader");
     }
 
     @Override
     public Collection<Identifier> getFabricDependencies() {
-        return Collections.singleton(HotbarAPI.identifierOf("status_bar_loader"));
+        return Collections.singleton(HotbarAPI.identifierOf("server_status_bar_loader"));
     }
 
     @Override
@@ -73,7 +73,7 @@ public class StatusBarOverlayLoader implements SimpleSynchronousResourceReloadLi
                     }
                 }*/
 
-                //System.out.println(targetBar.getId());
+                System.out.println("ASEASDFASFAS FA SSEX " + statusBarOverlayId);
                 HotbarAPI.statusBarOverlayPacketQueue.add(new StatusBarOverlayS2CPacket(overlayId, target, texture, logicId, rendererId, underlay));
 
                 //HotbarAPI.statusBars.add(newstatus);

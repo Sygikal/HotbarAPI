@@ -3,6 +3,7 @@ package dev.sygii.hotbarapi;
 import dev.sygii.hotbarapi.access.InGameHudAccessor;
 import dev.sygii.hotbarapi.access.PlayerEntityAccessor;
 import dev.sygii.hotbarapi.data.client.ClientStatusBarLoader;
+import dev.sygii.hotbarapi.data.client.ClientStatusBarOverlayLoader;
 import dev.sygii.hotbarapi.elements.*;
 import dev.sygii.hotbarapi.elements.vanilla.*;
 import dev.sygii.hotbarapi.network.HotbarHighlightPacket;
@@ -46,9 +47,8 @@ public class HotbarAPIClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new ClientStatusBarLoader());
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new ClientStatusBarOverlayLoader());
 		//ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new HotbarHighlightLoader());
-		//ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new StatusBarOverlayLoader());
-		//HotbarAPI.hotbarHighlights.put(Identifier.of("hotbarapi", "test"), new HotbarHighlight(Identifier.of("hotbarapi", "test"), new Color(255, 0, 0)));
 
 		HotbarAPI.registerStatusBarLogic(DEFAULT_STATUS_BAR_LOGIC);
 		HotbarAPI.registerStatusBarRenderer(DEFAULT_STATUS_BAR_RENDERER);
@@ -186,6 +186,7 @@ public class HotbarAPIClient implements ClientModInitializer {
 				if (HotbarAPI.statusBarRenderers.get(overlayRendererId) != null) {
 					renderer = HotbarAPI.statusBarRenderers.get(overlayRendererId);
 				}
+
 				StatusBar targetBar = null;
 				for (StatusBar bar : HotbarAPIClient.statusBars) {
 					if (bar.getId().equals(targetId)) {

@@ -5,7 +5,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.sygii.hotbarapi.access.InGameHudAccessor;
 import dev.sygii.hotbarapi.data.server.HotbarHighlightLoader;
 import dev.sygii.hotbarapi.data.server.ServerStatusBarLoader;
-import dev.sygii.hotbarapi.data.server.StatusBarOverlayLoader;
+import dev.sygii.hotbarapi.data.server.ServerStatusBarOverlayLoader;
 import dev.sygii.hotbarapi.elements.*;
 import dev.sygii.hotbarapi.network.HotbarHighlightPacket;
 import dev.sygii.hotbarapi.network.ResetStatusBarsS2CPacket;
@@ -86,7 +86,7 @@ public class HotbarAPI implements ModInitializer {
 		//ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new StatusBarOverlayLoader());
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new ServerStatusBarLoader());
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new HotbarHighlightLoader());
-		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new StatusBarOverlayLoader());
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new ServerStatusBarOverlayLoader());
 
 		//HotbarAPI.hotbarHighlights.put(Identifier.of("hotbarapi", "test"), new HotbarHighlight(Identifier.of("hotbarapi", "test"), new Color(255, 0, 0)));
 
