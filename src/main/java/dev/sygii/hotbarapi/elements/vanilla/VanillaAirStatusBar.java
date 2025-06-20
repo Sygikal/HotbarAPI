@@ -14,7 +14,6 @@ import net.minecraft.util.math.MathHelper;
 //? if >1.21.1 {
 /*import net.minecraft.client.render.RenderLayer;
 import net.minecraft.sound.SoundEvents;
-
 import java.util.function.Function;
 *///?}
 

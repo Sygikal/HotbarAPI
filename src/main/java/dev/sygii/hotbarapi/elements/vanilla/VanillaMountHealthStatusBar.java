@@ -6,13 +6,17 @@ import dev.sygii.hotbarapi.elements.StatusBarLogic;
 import dev.sygii.hotbarapi.elements.StatusBarRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+
+//? if >1.21.1 {
+/*import net.minecraft.client.render.RenderLayer;
+import java.util.function.Function;
+*///?}
 
 //? if >=1.21.6 {
 /*import com.mojang.blaze3d.pipeline.RenderPipeline;

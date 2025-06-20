@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-//? if >1.21.1
-/*import net.minecraft.client.render.RenderLayer;*/
+
+//? if >1.21.1 {
+/*import net.minecraft.client.render.RenderLayer;
+import java.util.function.Function;
+*///?}
 
 //? if >=1.21.6 {
 /*import com.mojang.blaze3d.pipeline.RenderPipeline;
@@ -59,8 +62,8 @@ public class StatusBarRenderer {
     //? if >=1.21.6 {
     /*RenderPipeline LAYER = RenderPipelines.GUI_TEXTURED;
     *///?} else if >=1.21.1 {
-    /*Function<Identifier, RenderLayer> LAYER = RenderLayer::getGuiTextured; // getGuiTexturedOverlay
-    */ //?}
+    /*Function<Identifier, RenderLayer> LAYER = RenderLayer::getGuiTexturedOverlay; // getGuiTexturedOverlay
+     *///?}
 
     public void render(MinecraftClient client, DrawContext context, PlayerEntity playerEntity, int x, int y, StatusBarLogic logic) {
         float current = logic.getValue(playerEntity);

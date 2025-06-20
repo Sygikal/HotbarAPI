@@ -13,8 +13,10 @@ import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
-//? if >1.21.1
-/*import net.minecraft.client.render.RenderLayer;*/
+//? if >1.21.1 {
+/*import net.minecraft.client.render.RenderLayer;
+import java.util.function.Function;
+*///?}
 
 //? if >=1.21.6 {
 /*import com.mojang.blaze3d.pipeline.RenderPipeline;
