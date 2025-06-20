@@ -14,6 +14,13 @@ import net.minecraft.util.math.MathHelper;
 //? if >1.21.1 {
 /*import net.minecraft.client.render.RenderLayer;
 import net.minecraft.sound.SoundEvents;
+
+import java.util.function.Function;
+*///?}
+
+//? if >=1.21.6 {
+/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.gl.RenderPipelines;
 *///?}
 
 public class VanillaAirStatusBar {
@@ -31,6 +38,11 @@ public class VanillaAirStatusBar {
 
         private int lastBurstBubble;
         private static final Identifier ID = Identifier.ofVanilla("air_renderer");
+        //? if >=1.21.6 {
+        /^RenderPipeline LAYER = RenderPipelines.GUI_TEXTURED;
+        ^///?} else {
+        Function<Identifier, RenderLayer> LAYER = RenderLayer::getGuiTextured;
+         //?}
         *///?}
 
         public VanillaAirStatusBarRenderer() {
@@ -58,6 +70,7 @@ public class VanillaAirStatusBar {
                 }
             }
             //?} else {
+
             /*int i = playerEntity.getMaxAir();
             int j = Math.min(i, Math.max(playerEntity.getAir(), 0));
             boolean bl = playerEntity.isSubmergedIn(FluidTags.WATER);
@@ -76,13 +89,13 @@ public class VanillaAirStatusBar {
 
                     //int o = xPosition - (n - 1) * 8 - 9;
                     if (n <= k) {
-                        context.drawGuiTexture(RenderLayer::getGuiTextured, AIR_TEXTURE, o, yPosition, 9, 9);
+                        context.drawGuiTexture(LAYER, AIR_TEXTURE, o, yPosition, 9, 9);
                     } else if (bl2 && n == l && bl) {
-                        context.drawGuiTexture(RenderLayer::getGuiTextured, AIR_BURSTING_TEXTURE, o, yPosition, 9, 9);
+                        context.drawGuiTexture(LAYER, AIR_BURSTING_TEXTURE, o, yPosition, 9, 9);
                         this.playBurstSound(n, playerEntity, m);
                     } else if (n > 10 - m) {
                         int p = m == 10 && client.inGameHud.getTicks() % 2 == 0 ? client.inGameHud.random.nextInt(2) : 0;
-                        context.drawGuiTexture(RenderLayer::getGuiTextured, AIR_EMPTY_TEXTURE, o, yPosition + p, 9, 9);
+                        context.drawGuiTexture(LAYER, AIR_EMPTY_TEXTURE, o, yPosition + p, 9, 9);
                     }
                 }
             }

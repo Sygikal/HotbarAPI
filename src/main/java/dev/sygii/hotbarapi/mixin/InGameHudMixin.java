@@ -170,7 +170,9 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
 
     //? if =1.20.1 {
     @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", ordinal = 0), index = 1)
-     //?} else {
+    //?} else if =1.21.6 {
+    /*@ModifyArg(method = "renderOverlayMessage", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;translate(FF)Lorg/joml/Matrix3x2f;"), index = 1)
+    *///?} else {
     /*@ModifyArg(method = "renderOverlayMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"), index = 1)
     *///?}
     private float changeActionBarHeight(float og) {

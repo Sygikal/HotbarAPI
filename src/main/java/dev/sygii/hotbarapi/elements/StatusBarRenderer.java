@@ -14,6 +14,11 @@ import java.util.Map;
 //? if >1.21.1
 /*import net.minecraft.client.render.RenderLayer;*/
 
+//? if >=1.21.6 {
+/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.gl.RenderPipelines;
+*///?}
+
 public class StatusBarRenderer {
     private final Identifier id;
     private Identifier texture;
@@ -51,6 +56,12 @@ public class StatusBarRenderer {
         render(client, context, playerEntity, xPos, s);
     }*/
 
+    //? if >=1.21.6 {
+    /*RenderPipeline LAYER = RenderPipelines.GUI_TEXTURED;
+    *///?} else if >=1.21.1 {
+    /*Function<Identifier, RenderLayer> LAYER = RenderLayer::getGuiTextured; // getGuiTexturedOverlay
+    */ //?}
+
     public void render(MinecraftClient client, DrawContext context, PlayerEntity playerEntity, int x, int y, StatusBarLogic logic) {
         float current = logic.getValue(playerEntity);
         float max = logic.getMaxValue(playerEntity);
@@ -61,7 +72,7 @@ public class StatusBarRenderer {
             //? if =1.20.1 {
             context.drawTexture(getTexture(), xPosition, y, 0, 0, 9, 9, 27, 9);
             //?} else {
-            /*context.drawTexture(RenderLayer::getGuiTexturedOverlay, getTexture(), xPosition, y, 0, 0, 9, 9, 27, 9);
+            /*context.drawTexture(LAYER, getTexture(), xPosition, y, 0, 0, 9, 9, 27, 9);
             *///?}
             float prevasd = w * apparition;
             float asd = (w + 1) * apparition;
@@ -71,7 +82,7 @@ public class StatusBarRenderer {
                 //? if =1.20.1 {
                 context.drawTexture(getTexture(), xPosition, y, 9, 0, 9, 9, 27, 9);
                  //?} else {
-                /*context.drawTexture(RenderLayer::getGuiTexturedOverlay, getTexture(), xPosition, y, 9, 0, 9, 9, 27, 9);
+                /*context.drawTexture(LAYER, getTexture(), xPosition, y, 9, 0, 9, 9, 27, 9);
                 *///?}
             }
 
@@ -79,7 +90,7 @@ public class StatusBarRenderer {
                 //? if =1.20.1 {
                 context.drawTexture(getTexture(), xPosition, y, 18, 0, 9, 9, 27, 9);
                  //?} else {
-                /*context.drawTexture(RenderLayer::getGuiTexturedOverlay, getTexture(), xPosition, y, 18, 0, 9, 9, 27, 9);
+                /*context.drawTexture(LAYER, getTexture(), xPosition, y, 18, 0, 9, 9, 27, 9);
                 *///?}
             }
         }

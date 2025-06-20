@@ -19,7 +19,7 @@ stonecutter {
 
 	// Subproject configuration
 	create(getRootProject()) {
-		versions "1.20.1", "1.21.1", "1.21.5"
+		versions "1.20.1", "1.21.1", "1.21.5", "1.21.6"
 		vcsVersion = "1.20.1"
 	}
 }

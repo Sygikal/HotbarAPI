@@ -16,6 +16,11 @@ import net.minecraft.util.math.MathHelper;
 //? if >1.21.1
 /*import net.minecraft.client.render.RenderLayer;*/
 
+//? if >=1.21.6 {
+/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.gl.RenderPipelines;
+*///?}
+
 public class VanillaHealthStatusBar {
     public static class VanillaHealthStatusBarRenderer extends StatusBarRenderer {
 
@@ -28,6 +33,12 @@ public class VanillaHealthStatusBar {
         private static final Identifier VEHICLE_FULL_HEART_TEXTURE = Identifier.ofVanilla("hud/heart/vehicle_full");
         private static final Identifier VEHICLE_HALF_HEART_TEXTURE = Identifier.ofVanilla("hud/heart/vehicle_half");
         private static final Identifier ID = Identifier.ofVanilla("health_renderer");
+
+        //? if >=1.21.6 {
+        /^RenderPipeline LAYER = RenderPipelines.GUI_TEXTURED;
+        ^///?} else {
+        Function<Identifier, RenderLayer> LAYER = RenderLayer::getGuiTextured;
+         //?}
         *///?}
 
         public VanillaHealthStatusBarRenderer() {
@@ -160,7 +171,7 @@ public class VanillaHealthStatusBar {
 
         //? if >=1.21.1 {
         /*private void drawHeart(DrawContext context, InGameHud.HeartType type, int x, int y, boolean hardcore, boolean blinking, boolean half) {
-            context.drawGuiTexture(RenderLayer::getGuiTextured, type.getTexture(hardcore, half, blinking), x, y, 9, 9);
+            context.drawGuiTexture(LAYER, type.getTexture(hardcore, half, blinking), x, y, 9, 9);
         }
         *///?}
 

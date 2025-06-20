@@ -15,6 +15,11 @@ import net.minecraft.util.math.MathHelper;
 //? if >1.21.1
 /*import net.minecraft.client.render.RenderLayer;*/
 
+//? if >=1.21.6 {
+/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.gl.RenderPipelines;
+*///?}
+
 public class VanillaHungerStatusBar {
 
     public static class VanillaHungerStatusBarRenderer extends StatusBarRenderer {
@@ -31,6 +36,12 @@ public class VanillaHungerStatusBar {
         private static final Identifier FOOD_FULL_TEXTURE = Identifier.ofVanilla("hud/food_full");
         private static final Identifier ICONS = null;
         private static final Identifier ID = Identifier.ofVanilla("hunger_renderer");
+
+        //? if >=1.21.6 {
+        /^RenderPipeline LAYER = RenderPipelines.GUI_TEXTURED;
+        ^///?} else {
+        Function<Identifier, RenderLayer> LAYER = RenderLayer::getGuiTextured;
+         //?}
         *///?}
 
         public VanillaHungerStatusBarRenderer() {
@@ -94,13 +105,13 @@ public class VanillaHungerStatusBar {
                 //int l = xPosition - j * 8 - 9;
                 int l = xPosition + (getDirection().equals(Direction.L2R) ? (getPosition().equals(Position.RIGHT) ? -72 : 0) + j * 8 : (getPosition().equals(Position.LEFT) ? 72 : 0) + -(j * 8));
 
-                context.drawGuiTexture(RenderLayer::getGuiTextured, identifier, l, k, 9, 9);
+                context.drawGuiTexture(LAYER, identifier, l, k, 9, 9);
                 if (j * 2 + 1 < i) {
-                    context.drawGuiTexture(RenderLayer::getGuiTextured, identifier3, l, k, 9, 9);
+                    context.drawGuiTexture(LAYER, identifier3, l, k, 9, 9);
                 }
 
                 if (j * 2 + 1 == i) {
-                    context.drawGuiTexture(RenderLayer::getGuiTextured, identifier2, l, k, 9, 9);
+                    context.drawGuiTexture(LAYER, identifier2, l, k, 9, 9);
                 }
             }
             *///?}

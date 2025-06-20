@@ -16,6 +16,11 @@ import net.minecraft.util.math.MathHelper;
 //? if >1.21.1
 /*import net.minecraft.client.render.RenderLayer;*/
 
+//? if >=1.21.6 {
+/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.gl.RenderPipelines;
+*///?}
+
 public class VanillaArmorStatusBar {
 
     public static class VanillaArmorStatusBarRenderer extends StatusBarRenderer {
@@ -29,6 +34,12 @@ public class VanillaArmorStatusBar {
         private static final Identifier ARMOR_HALF_TEXTURE = Identifier.ofVanilla("hud/armor_half");
         private static final Identifier ARMOR_FULL_TEXTURE = Identifier.ofVanilla("hud/armor_full");
         private static final Identifier ID = Identifier.ofVanilla("armor_renderer");
+
+        //? if >=1.21.6 {
+        /^RenderPipeline LAYER = RenderPipelines.GUI_TEXTURED;
+        ^///?} else {
+        Function<Identifier, RenderLayer> LAYER = RenderLayer::getGuiTextured;
+         //?}
         *///?}
 
         public VanillaArmorStatusBarRenderer() {
@@ -70,15 +81,15 @@ public class VanillaArmorStatusBar {
                 for(int n = 0; n < 10; ++n) {
                     int o = xPosition + n * 8;
                     if (n * 2 + 1 < l) {
-                        context.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_FULL_TEXTURE, o, m, 9, 9);
+                        context.drawGuiTexture(LAYER, ARMOR_FULL_TEXTURE, o, m, 9, 9);
                     }
 
                     if (n * 2 + 1 == l) {
-                        context.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_HALF_TEXTURE, o, m, 9, 9);
+                        context.drawGuiTexture(LAYER, ARMOR_HALF_TEXTURE, o, m, 9, 9);
                     }
 
                     if (n * 2 + 1 > l) {
-                        context.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_EMPTY_TEXTURE, o, m, 9, 9);
+                        context.drawGuiTexture(LAYER, ARMOR_EMPTY_TEXTURE, o, m, 9, 9);
                     }
                 }
 

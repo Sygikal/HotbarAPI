@@ -14,6 +14,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
+//? if >=1.21.6 {
+/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.gl.RenderPipelines;
+*///?}
+
 public class VanillaMountHealthStatusBar{
 
     public static class VanillaMountHealthStatusBarRenderer extends StatusBarRenderer {
@@ -27,6 +32,12 @@ public class VanillaMountHealthStatusBar{
         private static final Identifier VEHICLE_FULL_HEART_TEXTURE = Identifier.ofVanilla("hud/heart/vehicle_full");
         private static final Identifier VEHICLE_HALF_HEART_TEXTURE = Identifier.ofVanilla("hud/heart/vehicle_half");
         private static final Identifier ID = Identifier.ofVanilla("mount_health_renderer");
+
+        //? if >=1.21.6 {
+        /^RenderPipeline LAYER = RenderPipelines.GUI_TEXTURED;
+        ^///?} else {
+        Function<Identifier, RenderLayer> LAYER = RenderLayer::getGuiTextured;
+         //?}
         *///?}
 
         public VanillaMountHealthStatusBarRenderer() {
@@ -86,13 +97,13 @@ public class VanillaMountHealthStatusBar{
                             //int q = l - p * 8 - 9;
                             int q = xPosition + (getDirection().equals(Direction.L2R) ? (getPosition().equals(Position.RIGHT) ? -72 : 0) + p * 8 : (getPosition().equals(Position.LEFT) ? 72 : 0) + -(p * 8));
 
-                            context.drawGuiTexture(RenderLayer::getGuiTextured, VEHICLE_CONTAINER_HEART_TEXTURE, q, m, 9, 9);
+                            context.drawGuiTexture(LAYER, VEHICLE_CONTAINER_HEART_TEXTURE, q, m, 9, 9);
                             if (p * 2 + 1 + n < j) {
-                                context.drawGuiTexture(RenderLayer::getGuiTextured, VEHICLE_FULL_HEART_TEXTURE, q, m, 9, 9);
+                                context.drawGuiTexture(LAYER, VEHICLE_FULL_HEART_TEXTURE, q, m, 9, 9);
                             }
 
                             if (p * 2 + 1 + n == j) {
-                                context.drawGuiTexture(RenderLayer::getGuiTextured, VEHICLE_HALF_HEART_TEXTURE, q, m, 9, 9);
+                                context.drawGuiTexture(LAYER, VEHICLE_HALF_HEART_TEXTURE, q, m, 9, 9);
                             }
                         }
 
