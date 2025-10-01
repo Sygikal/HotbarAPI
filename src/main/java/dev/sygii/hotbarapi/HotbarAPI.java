@@ -38,6 +38,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,8 @@ public class HotbarAPI implements ModInitializer {
 
 	public static final List<StatusBarS2CPacket> statusBarPacketQueue = new ArrayList<StatusBarS2CPacket>();
 	public static final List<StatusBarOverlayS2CPacket> statusBarOverlayPacketQueue = new ArrayList<StatusBarOverlayS2CPacket>();
+
+	public static final Map<Identifier, List<StatusBarOverlay>> overlayQueue = new LinkedHashMap<>();
 
 
 	//public static final List<Identifier> replacedStatusBars = new ArrayList<Identifier>();
@@ -215,14 +218,20 @@ public class HotbarAPI implements ModInitializer {
 		return targetBar;
 	}
 
-	public static void registerStatusBarOverlay(StatusBar target, StatusBarOverlay overlay) {
-		if (overlay.isUnderlay()) {
-			target.addUnderlay(overlay);
-		}else {
-			target.addOverlay(overlay);
+	public static void registerStatusBarOverlay(Identifier targetId, StatusBarOverlay overlay) {
+		StatusBar targetBar = HotbarAPI.getTargetBar(targetId);
+		if (targetBar == null) {
+			overlayQueue.computeIfAbsent(targetId, k -> new ArrayList<>()).add(overlay);
+			LOGGER.info("Target was absent, adding {} to queue", overlay.getId());
+		} else {
+			overlay.update(targetBar);
+			if (overlay.isUnderlay()) {
+				targetBar.addUnderlay(overlay);
+			}else {
+				targetBar.addOverlay(overlay);
+			}
+			LOGGER.info("Registering Status Bar {}: {} | {} | {} | {} | {}", overlay.isUnderlay() ? "Underlay" : "Overlay", overlay.getId(), targetId, overlay.getRenderer().getTexture(), overlay.getRenderer().getId(), overlay.getLogic().getId());
 		}
-
-        LOGGER.info("Registering Status Bar {}: {} | {} | {} | {} | {}", overlay.isUnderlay() ? "Underlay" : "Overlay", overlay.getId(), target.getId(), overlay.getRenderer().getTexture(), overlay.getRenderer().getId(), overlay.getLogic().getId());
 	}
 
 	public static void registerStatusBar(StatusBar bar) {
@@ -230,6 +239,12 @@ public class HotbarAPI implements ModInitializer {
 		removeReplaced();
 		HotbarAPIClient.statusBars.add(bar);
 		sortStatusBars();
+
+		if (overlayQueue.containsKey(bar.getId())) {
+			for (StatusBarOverlay statusBarOverlay : overlayQueue.get(bar.getId())) {
+				registerStatusBarOverlay(bar.getId(), statusBarOverlay);
+			}
+		}
 
 		String befores = "[" +
 				bar.getBeforeIds()

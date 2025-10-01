@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 //? if >1.20.1 {
-/*import net.minecraft.network.packet.CustomPayload;*/
-//?}
+/*import net.minecraft.network.packet.CustomPayload;
+*///?}
 
 public class ClientPacketHandler {
 
@@ -94,10 +94,7 @@ public class ClientPacketHandler {
                 Identifier overlayLogicId = payload.overlayLogicId();
                 boolean underlay = payload.underlay();
                 client.execute(() -> {
-                    StatusBar targetBar = HotbarAPI.getTargetBar(targetId);
-                    if (targetBar != null) {
-                        HotbarAPI.registerStatusBarOverlay(targetBar, new StatusBarOverlay(overlayBarId, targetBar, texture, HotbarAPI.getRenderer(overlayRendererId), HotbarAPI.getLogic(overlayLogicId), underlay));
-                    }
+                    HotbarAPI.registerStatusBarOverlay(targetId, new StatusBarOverlay(overlayBarId, targetId, texture, HotbarAPI.getRenderer(overlayRendererId), HotbarAPI.getLogic(overlayLogicId), underlay));
                 });
             }
         }, (buf) -> {

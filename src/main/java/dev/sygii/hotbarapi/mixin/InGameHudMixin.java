@@ -30,7 +30,7 @@ import java.awt.*;
 import java.util.Map;
 
 //? if >=1.21.1 {
-/*
+/*import net.minecraft.util.profiler.Profilers;
 @Environment(EnvType.CLIENT)
 *///?}
 @Mixin(InGameHud.class)
