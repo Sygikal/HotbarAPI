@@ -28,13 +28,13 @@ public class VanillaHealthStatusBar {
 
         //? if =1.20.1 {
         private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
-        private static final Identifier ID = new Identifier("health_renderer");
+        public static final Identifier ID = new Identifier("health_renderer");
         //?} else {
         /*private static final Identifier ICONS = null;
         private static final Identifier VEHICLE_CONTAINER_HEART_TEXTURE = Identifier.ofVanilla("hud/heart/vehicle_container");
         private static final Identifier VEHICLE_FULL_HEART_TEXTURE = Identifier.ofVanilla("hud/heart/vehicle_full");
         private static final Identifier VEHICLE_HALF_HEART_TEXTURE = Identifier.ofVanilla("hud/heart/vehicle_half");
-        private static final Identifier ID = Identifier.ofVanilla("health_renderer");
+        public static final Identifier ID = Identifier.ofVanilla("health_renderer");
 
         //? if >=1.21.6 {
         /^RenderPipeline LAYER = RenderPipelines.GUI_TEXTURED;
@@ -78,7 +78,11 @@ public class VanillaHealthStatusBar {
             }
 
             InGameHud.HeartType heartType = InGameHud.HeartType.fromPlayerState(playerEntity);
+            //? if >=1.21.9 {
+            /^boolean bl = playerEntity.getEntityWorld().getLevelProperties().isHardcore();
+            ^///?} else {
             boolean bl = playerEntity.getWorld().getLevelProperties().isHardcore();
+            //?}
             int i = MathHelper.ceil((double)maxHealth / (double)2.0F);
             int j = MathHelper.ceil((double)absorption / (double)2.0F);
             int k = i * 2;

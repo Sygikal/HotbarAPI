@@ -1,16 +1,19 @@
 package dev.sygii.hotbarapi.elements.vanilla;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.sygii.hotbarapi.HotbarAPI;
 import dev.sygii.hotbarapi.elements.StatusBar;
 import dev.sygii.hotbarapi.elements.StatusBarLogic;
 import dev.sygii.hotbarapi.elements.StatusBarRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 
 //? if >1.21.1 {
@@ -29,13 +32,13 @@ public class VanillaArmorStatusBar {
 
         //? if =1.20.1 {
         private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
-        private static final Identifier ID = new Identifier("armor_renderer");
+        public static final Identifier ID = new Identifier("armor_renderer");
         //?} else {
         /*private static final Identifier ICONS = null;
         private static final Identifier ARMOR_EMPTY_TEXTURE = Identifier.ofVanilla("hud/armor_empty");
         private static final Identifier ARMOR_HALF_TEXTURE = Identifier.ofVanilla("hud/armor_half");
         private static final Identifier ARMOR_FULL_TEXTURE = Identifier.ofVanilla("hud/armor_full");
-        private static final Identifier ID = Identifier.ofVanilla("armor_renderer");
+        public static final Identifier ID = Identifier.ofVanilla("armor_renderer");
 
         //? if >=1.21.6 {
         /^RenderPipeline LAYER = RenderPipelines.GUI_TEXTURED;
@@ -66,6 +69,19 @@ public class VanillaArmorStatusBar {
                     }
 
                     if (w * 2 + 1 == u) {
+                        /*RenderSystem.depthFunc((int)514);
+                        RenderSystem.blendFuncSeparate((int)768, (int)1, (int)1, (int)0);
+                        float intensity = ((Double)client.options.getGlintStrength().getValue()).floatValue() * 1.5f;
+                        RenderSystem.setShaderColor((float)intensity, (float)intensity, (float)intensity, (float)1.0f);
+                        double glintSpeed = (Double)client.options.getGlintSpeed().getValue();
+                        long time = (long)((double) Util.getMeasuringTimeMs() * glintSpeed * 8.0);
+                        u = (int)((long)u + (-(time % 110000L) * 256L / 110000L + (long)x));
+                        v = (int)((long)v + (time % 30000L * 256L / 30000L + (long)y));
+                        context.drawTexture(RenderPipelines.GUI_TEXTURED, ItemRenderer.ITEM_ENCHANTMENT_GLINT, x, y, (float)u, (float)v, width, height, 256, 256);
+                        RenderSystem.depthFunc((int)515);
+                        RenderSystem.defaultBlendFunc();
+                        RenderSystem.setShaderColor((float)1.0f, (float)1.0f, (float)1.0f, (float)1.0f);*/
+
                         context.drawTexture(ICONS, x, yPosition, 25, 9, 9, 9);
                     }
 
@@ -103,9 +119,9 @@ public class VanillaArmorStatusBar {
     public static class VanillaArmorStatusBarLogic extends StatusBarLogic {
 
         //? if =1.20.1 {
-        private static final Identifier ID = new Identifier("armor_logic");
+        public static final Identifier ID = new Identifier("armor_logic");
          //?} else {
-        /*private static final Identifier ID = Identifier.ofVanilla("armor_logic");
+        /*public static final Identifier ID = Identifier.ofVanilla("armor_logic");
         *///?}
 
         public VanillaArmorStatusBarLogic() {

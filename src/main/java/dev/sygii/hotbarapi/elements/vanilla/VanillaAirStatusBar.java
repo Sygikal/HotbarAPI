@@ -28,7 +28,7 @@ public class VanillaAirStatusBar {
 
         //? if =1.20.1 {
         private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
-        private static final Identifier ID = new Identifier("air_renderer");
+        public static final Identifier ID = new Identifier("air_renderer");
         //?} else {
         /*private static final Identifier ICONS = null;
         private static final Identifier AIR_TEXTURE = Identifier.ofVanilla("hud/air");
@@ -36,7 +36,7 @@ public class VanillaAirStatusBar {
         private static final Identifier AIR_EMPTY_TEXTURE = Identifier.ofVanilla("hud/air_empty");
 
         private int lastBurstBubble;
-        private static final Identifier ID = Identifier.ofVanilla("air_renderer");
+        public static final Identifier ID = Identifier.ofVanilla("air_renderer");
         //? if >=1.21.6 {
         /^RenderPipeline LAYER = RenderPipelines.GUI_TEXTURED;
         ^///?} else {
@@ -69,7 +69,6 @@ public class VanillaAirStatusBar {
                 }
             }
             //?} else {
-
             /*int i = playerEntity.getMaxAir();
             int j = Math.min(i, Math.max(playerEntity.getAir(), 0));
             boolean bl = playerEntity.isSubmergedIn(FluidTags.WATER);
@@ -125,9 +124,9 @@ public class VanillaAirStatusBar {
     public static class VanillaAirStatusBarLogic extends StatusBarLogic {
 
         //? if =1.20.1 {
-        private static final Identifier ID = new Identifier("air_logic");
+        public static final Identifier ID = new Identifier("air_logic");
          //?} else {
-        /*private static final Identifier ID = Identifier.ofVanilla("air_logic");
+        /*public static final Identifier ID = Identifier.ofVanilla("air_logic");
         *///?}
 
         public VanillaAirStatusBarLogic() {
