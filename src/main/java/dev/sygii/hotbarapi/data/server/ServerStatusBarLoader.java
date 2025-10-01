@@ -1,135 +1,78 @@
 package dev.sygii.hotbarapi.data.server;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import dev.sygii.hotbarapi.HotbarAPI;
 import dev.sygii.hotbarapi.elements.StatusBarRenderer;
-import dev.sygii.hotbarapi.network.StatusBarS2CPacket;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.resource.ResourceManager;
+import dev.sygii.hotbarapi.network.packet.StatusBarS2CPacket;
+import dev.sygii.ultralib.data.loader.SimpleDataLoader;
+import dev.sygii.ultralib.data.util.OptionalObject;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.List;
 
-public class ServerStatusBarLoader implements SimpleSynchronousResourceReloadListener {
-
-    @Override
+public class ServerStatusBarLoader extends SimpleDataLoader {
+//? if <1.21.9 {
+   @Override
     public Identifier getFabricId() {
-        return HotbarAPI.identifierOf("server_status_bar_loader");
+        return ID;
+    }
+//?}
+    public static final Identifier ID = HotbarAPI.identifierOf("server_status_bar_loader");
+
+    public ServerStatusBarLoader() {
+        super(ID, "status_bar");
     }
 
     @Override
-    public void reload(ResourceManager manager) {
-        //HotbarAPI.statusBars.clear();
-        //HotbarAPI.replacedStatusBars.clear();
-        //HotbarAPI.serverRegisteredStatusBars.clear();
+    public void preReload() {
         HotbarAPI.statusBarPacketQueue.clear();
-        manager.findResources("status_bar", id -> id.getPath().endsWith(".json")).forEach((id, resourceRef) -> {
-            try {
-                InputStream stream = null;
-                stream = resourceRef.getInputStream();
-                JsonObject data = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
+    }
 
-                String statusBarId = getBaseName(id.getPath());
-                List<Identifier> beforeIds = new ArrayList<>();
-                if (data.has("before")) {
-                    for (JsonElement elem : data.getAsJsonArray("before")) {
-                        beforeIds.add(Identifier.tryParse(elem.getAsString()));
-                    }
-                    //beforeIds = Identifier.tryParse(data.get("before").getAsString());
-                }
+    @Override
+    public void reloadResource(JsonObject data, Identifier entryId, String fileName) {
+        List<Identifier> beforeIds = new ArrayList<>();
+        for (JsonElement elem : OptionalObject.get(data, "before", new JsonArray()).getAsJsonArray()) {
+            beforeIds.add(Identifier.tryParse(elem.getAsString()));
+        }
 
-                List<Identifier> afterIds = new ArrayList<>();
-                if (data.has("after")) {
-                    for (JsonElement elem : data.getAsJsonArray("after")) {
-                        afterIds.add(Identifier.tryParse(elem.getAsString()));
-                    }
-                    //beforeIds = Identifier.tryParse(data.get("before").getAsString());
-                }
+        List<Identifier> afterIds = new ArrayList<>();
+        for (JsonElement elem : OptionalObject.get(data, "after", new JsonArray()).getAsJsonArray()) {
+            afterIds.add(Identifier.tryParse(elem.getAsString()));
+        }
 
-                Identifier replaceId = HotbarAPI.NULL_STATUS_BAR_REPLACEMENT;
-                boolean replace = false;
-                if (data.has("replace")) {
-                    replace = true;
-                    replaceId = Identifier.tryParse(data.get("replace").getAsString());
-                }
-                Identifier texture = Identifier.tryParse(data.get("texture").getAsString());
-                Identifier barId = Identifier.of(id.getNamespace(), statusBarId);
-                StatusBarRenderer.Direction direction = StatusBarRenderer.Direction.valueOf(data.get("direction").getAsString().toUpperCase());
-                StatusBarRenderer.Position position = StatusBarRenderer.Position.valueOf(data.get("position").getAsString().toUpperCase());
+        Identifier replaceId = Identifier.tryParse(OptionalObject.get(data, "replace", HotbarAPI.NULL_STATUS_BAR_REPLACEMENT.toString()).getAsString());
+        Identifier texture = Identifier.tryParse(data.get("texture").getAsString());
+        StatusBarRenderer.Direction direction = StatusBarRenderer.Direction.valueOf(data.get("direction").getAsString().toUpperCase());
+        StatusBarRenderer.Position position = StatusBarRenderer.Position.valueOf(data.get("position").getAsString().toUpperCase());
 
-                /*StatusBarLogic logic = HotbarAPI.DEFAULT_STATUS_BAR_LOGIC;
-                if (data.has("logic") && HotbarAPI.statusBarLogics.get(Identifier.tryParse(data.get("logic").getAsString())) != null) {
-                    logic = HotbarAPI.statusBarLogics.get(Identifier.tryParse(data.get("logic").getAsString()));
-                }
+        Identifier logicId = Identifier.tryParse(OptionalObject.get(data, "logic", HotbarAPI.DEFAULT_STATUS_BAR_LOGIC.getId().toString()).getAsString());
+        Identifier rendererId = Identifier.tryParse(OptionalObject.get(data, "renderer", HotbarAPI.DEFAULT_STATUS_BAR_RENDERER.getId().toString()).getAsString());
 
-                StatusBarRenderer renderer = HotbarAPI.DEFAULT_STATUS_BAR_RENDERER;
-                if (data.has("renderer") && HotbarAPI.statusBarRenderers.get(Identifier.tryParse(data.get("renderer").getAsString())) != null) {
-                    renderer = HotbarAPI.statusBarRenderers.get(Identifier.tryParse(data.get("renderer").getAsString()));
-                }*/
+        EnumSet<GameMode> gameModes = EnumSet.noneOf(GameMode.class);
+        //List<GameMode> gameModes = new ArrayList<>();
+        if (data.has("gamemodes")) {
+            for (JsonElement elem : data.getAsJsonArray("gamemodes")) {
+                gameModes.add(GameMode.valueOf(elem.getAsString().toUpperCase()));
+            }
+        }else {
+            gameModes.add(GameMode.SURVIVAL);
+            gameModes.add(GameMode.ADVENTURE);
+        }
 
-                Identifier logicId = HotbarAPI.DEFAULT_STATUS_BAR_LOGIC.getId();
-                if (data.has("logic")) {
-                    logicId = Identifier.tryParse(data.get("logic").getAsString());
-                }
+        /*for (Identifier replaced : HotbarAPI.replacedStatusBars) {
+            //HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaced));
+        }*/
 
-                Identifier rendererId = HotbarAPI.DEFAULT_STATUS_BAR_RENDERER.getId();
-                if (data.has("renderer")) {
-                    rendererId = Identifier.tryParse(data.get("renderer").getAsString());
-                }
+        //StatusBar newstatus = new StatusBar(barId, renderer.update(texture, position, direction), logic, beforeIds, afterIds, replaceId, gameModes);
+        //HotbarAPI.serverRegisteredStatusBars.add(newstatus);
 
-                /*if (replace) {
-                    HotbarAPI.replaceStatusBar(replaceId, new StatusBar(barId, renderer == null ? defaultRenderer : renderer, logic == null ? HotbarAPI.defaultLogic : logic, important));
-                } else if(before) {
-                    HotbarAPI.addStatusBarBefore(beforeId, new StatusBar(barId, renderer == null ? defaultRenderer : renderer, logic == null ? HotbarAPI.defaultLogic : logic, important));
-                }else {*/
-                /*if (index != -1) {
-                    if (index > HotbarAPI.statusBars.stream().filter((bar) -> bar.getRenderer().getPosition().equals(position)).toList().size()) {
-                        index = HotbarAPI.statusBars.stream().filter((bar) -> bar.getRenderer().getPosition().equals(position)).toList().size();
-                    }
-                    System.out.println(statusBarId + "  |  " + index);
-                    HotbarAPI.addStatusBar(new StatusBar(barId, renderer == null ? defaultRenderer : renderer, logic == null ? HotbarAPI.defaultLogic : logic, beforeIds, afterIds, important), index);
-                }else {
-                    HotbarAPI.addStatusBar(new StatusBar(barId, renderer == null ? defaultRenderer : renderer, logic == null ? HotbarAPI.defaultLogic : logic, beforeIds, afterIds, important));
-                }*/
-
-                EnumSet<GameMode> gameModes = EnumSet.noneOf(GameMode.class);
-                //List<GameMode> gameModes = new ArrayList<>();
-                if (data.has("gamemodes")) {
-                    for (JsonElement elem : data.getAsJsonArray("gamemodes")) {
-                        gameModes.add(GameMode.valueOf(elem.getAsString().toUpperCase()));
-                    }
-                }else {
-                    gameModes.add(GameMode.SURVIVAL);
-                    gameModes.add(GameMode.ADVENTURE);
-                }
-                if (replace) {
-                    //HotbarAPI.replacedStatusBars.add(replaceId);
-                    //HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaceId));
-                }
-
-
-                /*for (Identifier replaced : HotbarAPI.replacedStatusBars) {
-                    //HotbarAPI.statusBars.removeIf(s -> s.getId().equals(replaced));
-                }*/
-
-
-                //StatusBar newstatus = new StatusBar(barId, renderer.update(texture, position, direction), logic, beforeIds, afterIds, replaceId, gameModes);
-                //HotbarAPI.serverRegisteredStatusBars.add(newstatus);
-
-
-                HotbarAPI.statusBarPacketQueue.add(new StatusBarS2CPacket(barId, beforeIds, afterIds, replaceId, texture, direction, position, logicId, rendererId, gameModes));
-                //HotbarAPI.statusBars.add(newstatus);
-
-                //HotbarAPI.statusBars.sort(StatusBar::compareTo);
-
+        HotbarAPI.statusBarPacketQueue.add(new StatusBarS2CPacket(entryId, beforeIds, afterIds, replaceId, texture, direction, position, logicId, rendererId, gameModes));
+        //HotbarAPI.statusBars.add(newstatus);
+        //HotbarAPI.statusBars.sort(StatusBar::compareTo);
                 /*for (Iterator<StatusBar> it = HotbarAPI.statusBars.iterator(); it.hasNext();) {
                     StatusBar bar = it.next();
                     int barIndex = HotbarAPI.statusBars.indexOf(bar);
@@ -166,22 +109,13 @@ public class ServerStatusBarLoader implements SimpleSynchronousResourceReloadLis
                         }
                     }
                 }*/
-
-                //HotbarAPI.statusBars = HotbarAPI.sortByValue(HotbarAPI.statusBars);
-
-                //List<Map.Entry<Identifier, StatusBar>> list = new ArrayList<>(HotbarAPI.statusBars.entrySet());
-
-                //Using Entry's comparingByValue() method for sorting in ascending order
-                //list.sort(Map.Entry.comparingByValue());
-
-                //Printing the elements from the list
-                //list.forEach((fruit)->System.out.println(fruit.getKey() + " -> " + fruit.getValue()));
-
-                //}
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        //HotbarAPI.statusBars = HotbarAPI.sortByValue(HotbarAPI.statusBars);
+        //List<Map.Entry<Identifier, StatusBar>> list = new ArrayList<>(HotbarAPI.statusBars.entrySet());
+        //Using Entry's comparingByValue() method for sorting in ascending order
+        //list.sort(Map.Entry.comparingByValue());
+        //Printing the elements from the list
+        //list.forEach((fruit)->System.out.println(fruit.getKey() + " -> " + fruit.getValue()));
+        //}
     }
 
     public static void swap(List<?> list, int i, int j) {
@@ -190,18 +124,5 @@ public class ServerStatusBarLoader implements SimpleSynchronousResourceReloadLis
         // private method
         final List l = list;
         l.set(i, l.set(j, l.get(i)));
-    }
-
-    public static String getBaseName(String filename) {
-        if (filename == null)
-            return null;
-
-        String name = new File(filename).getName();
-        int extPos = name.lastIndexOf('.');
-
-        if (extPos < 0)
-            return name;
-
-        return name.substring(0, extPos);
     }
 }
