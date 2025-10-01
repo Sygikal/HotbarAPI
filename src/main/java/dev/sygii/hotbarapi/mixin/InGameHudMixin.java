@@ -1,13 +1,13 @@
 package dev.sygii.hotbarapi.mixin;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
-import dev.sygii.hotbarapi.HotbarAPI;
 import dev.sygii.hotbarapi.HotbarAPIClient;
-import dev.sygii.hotbarapi.elements.HotbarHighlight;
-import dev.sygii.hotbarapi.elements.StatusBar;
 import dev.sygii.hotbarapi.access.InGameHudAccessor;
+import dev.sygii.hotbarapi.elements.StatusBar;
 import dev.sygii.hotbarapi.elements.StatusBarOverlay;
 import dev.sygii.hotbarapi.elements.StatusBarRenderer;
 import net.fabricmc.api.EnvType;
@@ -19,21 +19,20 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
-//? if >=1.21.1
-/*import net.minecraft.util.profiler.Profilers;*/
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import dev.sygii.hotbarapi.util.ColorUtil;
 
 import java.awt.*;
-import java.util.Iterator;
 import java.util.Map;
 
+//? if >=1.21.1 {
+/*
 @Environment(EnvType.CLIENT)
+*///?}
 @Mixin(InGameHud.class)
 @Debug(export=true)
 public abstract class InGameHudMixin implements InGameHudAccessor {
@@ -89,7 +88,7 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         }
     }*/
 
-    @Inject(method = "tick()V", at = @At(value = "HEAD"))
+    /*@Inject(method = "tick()V", at = @At(value = "HEAD"))
     private void hotbarTick(CallbackInfo ci) {
         /*if (!hotbarSwitch && hotbarTicks < 100) {
             hotbarTicks += 1;
@@ -102,8 +101,8 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
             if(hotbarTicks==0) {
                 hotbarSwitch = false;
             }
-        }*/
-    }
+        }
+    }*/
 
     /*@Inject(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 0))
     private void renderHotBarColor(float tickDelta, DrawContext context, CallbackInfo ci, @Local PlayerEntity playerEntity) {
@@ -170,7 +169,7 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
 
     //? if =1.20.1 {
     @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V", ordinal = 0), index = 1)
-    //?} else if =1.21.6 {
+    //?} else if =1.21.9 {
     /*@ModifyArg(method = "renderOverlayMessage", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;translate(FF)Lorg/joml/Matrix3x2f;"), index = 1)
     *///?} else {
     /*@ModifyArg(method = "renderOverlayMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(FFF)V"), index = 1)
@@ -193,8 +192,8 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
         return true;
     }
 
-    //? if =1.20.1 {
-    @Inject(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"))
+    // if =1.20.1 {
+    /*@Inject(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"))
     private void resetHotBarColor(float tickDelta, DrawContext context, CallbackInfo ci, @Local PlayerEntity playerEntity) {
         for (Iterator<Map.Entry<Integer, HotbarHighlight>> it = HotbarAPI.mappedHotbarHighlights.entrySet().iterator(); it.hasNext();) {
             Map.Entry<Integer, HotbarHighlight> hot = it.next();
@@ -218,8 +217,8 @@ public abstract class InGameHudMixin implements InGameHudAccessor {
             }
         }
         ColorUtil.setColor(context, -1);
-    }
-    //?}
+    }*/
+    //}
 
     @Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", ordinal = 2))
     private void addBars(DrawContext context, CallbackInfo ci, @Local PlayerEntity playerEntity, @Local(ordinal = 3) int m, @Local(ordinal = 4) int n, @Local(ordinal = 5) int o) {
