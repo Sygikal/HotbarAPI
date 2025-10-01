@@ -7,33 +7,37 @@ import dev.sygii.hotbarapi.data.server.HotbarHighlightLoader;
 import dev.sygii.hotbarapi.data.server.ServerStatusBarLoader;
 import dev.sygii.hotbarapi.data.server.ServerStatusBarOverlayLoader;
 import dev.sygii.hotbarapi.elements.*;
-import dev.sygii.hotbarapi.network.HotbarHighlightPacket;
-import dev.sygii.hotbarapi.network.ResetStatusBarsS2CPacket;
-import dev.sygii.hotbarapi.network.StatusBarOverlayS2CPacket;
-import dev.sygii.hotbarapi.network.StatusBarS2CPacket;
+import dev.sygii.hotbarapi.network.ServerPacketHandler;
+import dev.sygii.hotbarapi.network.packet.HotbarHighlightPacket;
+import dev.sygii.hotbarapi.network.packet.ResetStatusBarsS2CPacket;
+import dev.sygii.hotbarapi.network.packet.StatusBarOverlayS2CPacket;
+import dev.sygii.hotbarapi.network.packet.StatusBarS2CPacket;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-//? if >1.20.1
-/*import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;*/
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-//? if =1.20.1
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+//? if =1.20.1 {
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+//?} else {
+/*import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+*///?}
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.GameMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +45,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HotbarAPI implements ModInitializer {
 	public static final String MOD_ID = "hotbarapi";
@@ -49,15 +54,6 @@ public class HotbarAPI implements ModInitializer {
 	public static final Identifier NULL_STATUS_BAR_REPLACEMENT = Identifier.of(HotbarAPI.MOD_ID, "null_status_bar_replacement");
 	public static final StatusBarRenderer DEFAULT_STATUS_BAR_RENDERER = new StatusBarRenderer(HotbarAPI.identifierOf("default_status_bar_renderer"), null, StatusBarRenderer.Position.LEFT, StatusBarRenderer.Direction.L2R);
 	public static final StatusBarLogic DEFAULT_STATUS_BAR_LOGIC = new StatusBarLogic(HotbarAPI.identifierOf("default_status_bar_logic"), (ent) -> 0, (ent) -> 0);
-
-
-
-	//public static Map<Identifier, StatusBar> statusBars = new LinkedHashMap<>();
-
-	//public static Map<Identifier, StatusBar> statusBars = new TreeMap<>();
-
-	/*SortedMap<String, Identifier> tm
-			= new TreeMap<String, Identifier>((a, b) -> b.compareTo(a));*/
 
 	//public static final List<StatusBar> serverRegisteredStatusBars = new ArrayList<StatusBar>();
 	//public static final List<StatusBarOverlay> serverRegisteredStatusBarOverlays = new ArrayList<StatusBarOverlay>();
@@ -76,118 +72,23 @@ public class HotbarAPI implements ModInitializer {
 	public static final Map<Identifier, HotbarHighlight> hotbarHighlights = new LinkedHashMap<>();
 	public static final Map<Integer, HotbarHighlight> mappedHotbarHighlights = new LinkedHashMap<>();
 
-	private static final SuggestionProvider<ServerCommandSource> HIGHLIGHT_SUGGESTION_PROVIDER = (context, builder) -> CommandSource.suggestIdentifiers(
-			HotbarAPI.hotbarHighlights.values().stream().map(HotbarHighlight::getId), builder);
-
 	@Override
 	public void onInitialize() {
-		//ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new StatusBarLoader());
-		//ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new HotbarHighlightLoader());
-		//ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new StatusBarOverlayLoader());
+		//? if >=1.21.9 {
+		/*ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(ServerStatusBarLoader.ID, new ServerStatusBarLoader());
+		ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(ServerStatusBarOverlayLoader.ID, new ServerStatusBarOverlayLoader());
+		ResourceLoader.get(ResourceType.SERVER_DATA).addReloaderOrdering(
+				ServerStatusBarLoader.ID, // Triggers first
+				ServerStatusBarOverlayLoader.ID // Triggers second
+		);
+		*///?} else {
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new ServerStatusBarLoader());
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new HotbarHighlightLoader());
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new ServerStatusBarOverlayLoader());
-
+		//?}
 		//HotbarAPI.hotbarHighlights.put(Identifier.of("hotbarapi", "test"), new HotbarHighlight(Identifier.of("hotbarapi", "test"), new Color(255, 0, 0)));
 
-		/*registerStatusBarLogic(DEFAULT_STATUS_BAR_LOGIC);
-		registerStatusBarRenderer(DEFAULT_STATUS_BAR_RENDERER);
-
-		StatusBarLogic healthLogic = new StatusBarLogic(HotbarAPI.identifierOf("health_logic"), LivingEntity::getMaxHealth, LivingEntity::getHealth);
-		registerStatusBarLogic(healthLogic);
-		StatusBarLogic hurtLogic = new StatusBarLogic(HotbarAPI.identifierOf("hurt_time_logic"), (ent) -> ent.maxHurtTime, (ent) -> ent.hurtTime);
-		registerStatusBarLogic(hurtLogic);
-		StatusBarLogic staminaLogic = new StatusBarLogic(HotbarAPI.identifierOf("stamina_logic"), (ent) -> 40, (ent) -> ((PlayerEntityAccessor) ent).getStamina());
-		registerStatusBarLogic(staminaLogic);
-
-		registerStatusBarRenderer(new VanillaAirStatusBar.VanillaAirStatusBarRenderer());
-		registerStatusBarLogic(new VanillaAirStatusBar.VanillaAirStatusBarLogic());
-		registerStatusBarRenderer(new VanillaArmorStatusBar.VanillaArmorStatusBarRenderer());
-		registerStatusBarLogic(new VanillaArmorStatusBar.VanillaArmorStatusBarLogic());
-		registerStatusBarRenderer(new VanillaHungerStatusBar.VanillaHungerStatusBarRenderer());
-		registerStatusBarRenderer(new VanillaHealthStatusBar.VanillaHealthStatusBarRenderer());
-		registerStatusBarLogic(new VanillaMountHealthStatusBar.VanillaMountHealthStatusBarLogic());
-		registerStatusBarRenderer(new VanillaMountHealthStatusBar.VanillaMountHealthStatusBarRenderer());*/
-
-		/*try (InputStream in = getClass().getResourceAsStream("/data/status_bar/");
-			 JarInputStream jar = new JarInputStream(getClass().getResourceAsStream());
-			 BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-			 System.out.println(reader.lines());
-		} catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
-
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, environment) -> {
-			dispatcher.register((CommandManager.literal("hhs").requires((serverCommandSource) -> {
-				return serverCommandSource.hasPermissionLevel(2);
-			})).then(CommandManager.argument("targets", EntityArgumentType.players())
-					// Add values
-					.then(CommandManager.literal("add").then(CommandManager.argument("hotbarHighlight", IdentifierArgumentType.identifier()).suggests(HIGHLIGHT_SUGGESTION_PROVIDER).then(CommandManager.argument("slot", IntegerArgumentType.integer(0, 8)).executes((commandContext) -> {
-						return executeSkillCommand(commandContext.getSource(), EntityArgumentType.getPlayers(commandContext, "targets"), IdentifierArgumentType.getIdentifier(commandContext, "hotbarHighlight"),
-								IntegerArgumentType.getInteger(commandContext, "slot"));
-					}))))
-					.then(CommandManager.literal("item").then(CommandManager.argument("itemName", ItemStackArgumentType.itemStack(dedicated)).then(CommandManager.argument("hotbarHighlight", IdentifierArgumentType.identifier()).suggests(HIGHLIGHT_SUGGESTION_PROVIDER).executes((commandContext) -> {
-						return highlightItem(commandContext.getSource(), EntityArgumentType.getPlayers(commandContext, "targets"), IdentifierArgumentType.getIdentifier(commandContext, "hotbarHighlight"),
-								ItemStackArgumentType.getItemStackArgument(commandContext, "itemName"));
-					}))))));
-		});
-		ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(HotbarAPI.identifierOf("sync_status_bars"), (player, joined) -> {
-			ServerPlayNetworking.send(player, new ResetStatusBarsS2CPacket());
-			/*for (StatusBar statusBar : HotbarAPI.serverRegisteredStatusBars) {
-				ServerPlayNetworking.send(player, new StatusBarS2CPacket(statusBar.getId(), statusBar.getBeforeIds(), statusBar.getAfterIds(), statusBar.getReplacing(), statusBar.getRenderer().getTexture(), statusBar.getRenderer().getDirection(), statusBar.getRenderer().getPosition(), statusBar.getLogic().getId(), statusBar.getRenderer().getId(), statusBar.getGameModes()));
-			}
-			for (StatusBarOverlay overlay : HotbarAPI.serverRegisteredStatusBarOverlays) {
-				ServerPlayNetworking.send(player, new StatusBarOverlayS2CPacket(overlay.getId(), overlay.getTarget(), overlay.getRenderer().getTexture(), overlay.getLogic().getId(), overlay.getRenderer().getId(), overlay.isUnderlay()));
-			}*/
-			HotbarAPI.statusBarPacketQueue.forEach((packet) -> ServerPlayNetworking.send(player, packet));
-			HotbarAPI.statusBarOverlayPacketQueue.forEach((packet) -> ServerPlayNetworking.send(player, packet));
-		});
-		//? if >1.20.1 {
-		/*PayloadTypeRegistry.playS2C().register(HotbarHighlightPacket.PACKET_ID, HotbarHighlightPacket.PACKET_CODEC);
-		PayloadTypeRegistry.playS2C().register(ResetStatusBarsS2CPacket.PACKET_ID, ResetStatusBarsS2CPacket.PACKET_CODEC);
-		PayloadTypeRegistry.playS2C().register(StatusBarS2CPacket.PACKET_ID, StatusBarS2CPacket.PACKET_CODEC);
-		PayloadTypeRegistry.playS2C().register(StatusBarOverlayS2CPacket.PACKET_ID, StatusBarOverlayS2CPacket.PACKET_CODEC);
-	    *///?}
-	}
-
-	private static int highlightItem(ServerCommandSource source, Collection<ServerPlayerEntity> targets, Identifier hotbarHighlight, ItemStackArgument item) {
-		for (ServerPlayerEntity serverPlayerEntity : targets) {
-			int index = indexOf(serverPlayerEntity, item.getItem().getDefaultStack());
-			if (index != -1) {
-				ServerPlayNetworking.send(serverPlayerEntity, new HotbarHighlightPacket(index, hotbarHighlight));
-				source.sendFeedback(() -> Text.literal("Highlighting item"), true);
-			} else {
-				source.sendFeedback(() -> Text.literal("Item not in hotbar"), true);
-			}
-		}
-
-		return targets.size();
-	}
-
-	public static int indexOf(ServerPlayerEntity serverPlayerEntity, ItemStack stack) {
-		for (int i = 0; i < 9; i++) {
-			//? if =1.20.1 {
-			ItemStack itemStack = serverPlayerEntity.getInventory().main.get(i);
-			if (!serverPlayerEntity.getInventory().main.get(i).isEmpty() && itemStack.getItem() == stack.getItem()) {
-			//?}
-			//? if >=1.21.1 {
-			/*ItemStack itemStack = serverPlayerEntity.getInventory().getMainStacks().get(i);
-			if (!serverPlayerEntity.getInventory().getMainStacks().get(i).isEmpty() && itemStack.getItem() == stack.getItem()) {
-			*///?}
-				return i;
-			}
-		}
-
-		return -1;
-	}
-
-	private static int executeSkillCommand(ServerCommandSource source, Collection<ServerPlayerEntity> targets, Identifier hotbarHighlight, int slot) {
-		for (ServerPlayerEntity serverPlayerEntity : targets) {
-			ServerPlayNetworking.send(serverPlayerEntity, new HotbarHighlightPacket(slot, hotbarHighlight));
-			source.sendFeedback(() -> Text.translatable("commands.level.changed", serverPlayerEntity.getDisplayName()), true);
-		}
-
-		return targets.size();
+		ServerPacketHandler.init();
 	}
 
 	public static void highlightHotbarSlot(MinecraftClient client, Color color, int slot) {
@@ -275,13 +176,101 @@ public class HotbarAPI implements ModInitializer {
 				(oldValue, newValue) -> oldValue, LinkedHashMap::new));//
 	}*/
 
-	public static void addStatusBar(StatusBar bar) {
-		//HotbarAPI.statusBars.add(bar);
+	public static StatusBarLogic getLogic(Identifier id) {
+		StatusBarLogic logic = HotbarAPI.DEFAULT_STATUS_BAR_LOGIC;
+		if (HotbarAPI.statusBarLogics.get(id) != null) {
+			logic = HotbarAPI.statusBarLogics.get(id);
+		}
+		return logic;
 	}
 
-	public static void addStatusBar(StatusBar bar, int index) {
-		//HotbarAPI.statusBars.put(bar.getId(), bar);
-		//HotbarAPI.statusBars.add(index, bar);
+	public static StatusBarRenderer getRenderer(Identifier id) {
+		StatusBarRenderer renderer = HotbarAPI.DEFAULT_STATUS_BAR_RENDERER;
+		if (HotbarAPI.statusBarRenderers.get(id) != null) {
+			renderer = HotbarAPI.statusBarRenderers.get(id);
+		}
+		return renderer;
+	}
+
+	public static void addToReplaced(Identifier id) {
+		if (!id.equals(HotbarAPI.NULL_STATUS_BAR_REPLACEMENT)) {
+			HotbarAPIClient.replacedStatusBars.add(id);
+		}
+	}
+
+	public static void removeReplaced() {
+		for (Identifier replaced : HotbarAPIClient.replacedStatusBars) {
+			HotbarAPIClient.statusBars.removeIf(s -> s.getId().equals(replaced));
+		}
+	}
+
+	public static StatusBar getTargetBar(Identifier id) {
+		StatusBar targetBar = null;
+		for (StatusBar bar : HotbarAPIClient.statusBars) {
+			if (bar.getId().equals(id)) {
+				targetBar = bar;
+				break;
+			}
+		}
+		return targetBar;
+	}
+
+	public static void registerStatusBarOverlay(StatusBar target, StatusBarOverlay overlay) {
+		if (overlay.isUnderlay()) {
+			target.addUnderlay(overlay);
+		}else {
+			target.addOverlay(overlay);
+		}
+
+        LOGGER.info("Registering Status Bar {}: {} | {} | {} | {} | {}", overlay.isUnderlay() ? "Underlay" : "Overlay", overlay.getId(), target.getId(), overlay.getRenderer().getTexture(), overlay.getRenderer().getId(), overlay.getLogic().getId());
+	}
+
+	public static void registerStatusBar(StatusBar bar) {
+		addToReplaced(bar.getReplacing());
+		removeReplaced();
+		HotbarAPIClient.statusBars.add(bar);
+		sortStatusBars();
+
+		String befores = "[" +
+				bar.getBeforeIds()
+						.stream()
+						.map(Identifier::toString)
+						.collect(Collectors.joining(", ")) + "]";
+
+		String afters = "[" +
+				bar.getAfterIds()
+						.stream()
+						.map(Identifier::toString)
+						.collect(Collectors.joining(", ")) + "]";
+
+		String modes = "[" +
+				bar.getGameModes()
+						.stream()
+						.map(GameMode::asString)
+						.collect(Collectors.joining(", ")) + "]";
+        LOGGER.info("Registering Status Bar: {} | {} | {} | {} | {} | {} | {} | {} | {} | {}", bar.getId(), befores, afters, bar.getReplacing(), bar.getRenderer().getTexture(), bar.getRenderer().getDirection(), bar.getRenderer().getPosition(), bar.getLogic().getId(), bar.getRenderer().getId(), modes);
+	}
+
+	public static void sortStatusBars() {
+		for (Iterator<StatusBar> it = HotbarAPIClient.statusBars.iterator(); it.hasNext();) {
+			StatusBar bar = it.next();
+			int barIndex = HotbarAPIClient.statusBars.indexOf(bar);
+			for (Iterator<StatusBar> it2 = HotbarAPIClient.statusBars.iterator(); it2.hasNext();) {
+				StatusBar bar2 = it2.next();
+				int bar2Index = HotbarAPIClient.statusBars.indexOf(bar2);
+				if(bar.getBeforeIds().contains(bar2.getId())) {
+					if (barIndex >= bar2Index) {
+						//HotbarAPI.statusBars.set(i, HotbarAPI.statusBars.set(j, HotbarAPI.statusBars.get(i)));
+						Collections.swap(HotbarAPIClient.statusBars, barIndex, bar2Index);
+					}
+				}
+				if(bar.getAfterIds().contains(bar2.getId())) {
+					if (barIndex <= bar2Index) {
+						Collections.swap(HotbarAPIClient.statusBars, barIndex, bar2Index);
+					}
+				}
+			}
+		}
 	}
 
 	public static void registerStatusBarLogic(StatusBarLogic logic) {
