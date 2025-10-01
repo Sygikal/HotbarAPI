@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.awt.*;
 
 @Mixin(PlayerEntity.class)
-public class PlayerEntityMixin implements PlayerEntityAccessor {
-    @Unique
+public class PlayerEntityMixin /*implements PlayerEntityAccessor*/ {
+    /*@Unique
     private int stamina = 40;
 
     @Unique
@@ -46,5 +46,5 @@ public class PlayerEntityMixin implements PlayerEntityAccessor {
     @Unique
     public int getStamina() {
         return stamina;
-    }
+    }*/
 }
