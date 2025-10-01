@@ -26,10 +26,10 @@ public class StatusBar extends HudElement implements Comparable<StatusBar> {
     private final EnumSet<GameMode> gameModes;
     private final List<StatusBarOverlay> overlays = new ArrayList<>();
     private final List<StatusBarOverlay> underlays = new ArrayList<>();
-    private final @Nullable Identifier toReplace;
+    private final Identifier toReplace;
 
 
-    public StatusBar(Identifier id, StatusBarRenderer renderer, StatusBarLogic logic, List<Identifier> beforeIds, List<Identifier> afterIds, @Nullable Identifier toReplace, EnumSet<GameMode> gameModes) {
+    public StatusBar(Identifier id, StatusBarRenderer renderer, StatusBarLogic logic, List<Identifier> beforeIds, List<Identifier> afterIds, Identifier toReplace, EnumSet<GameMode> gameModes) {
         this.id = id;
         this.renderer = renderer;
         this.logic = logic;
@@ -55,7 +55,7 @@ public class StatusBar extends HudElement implements Comparable<StatusBar> {
         return overlays;
     }
 
-    public @Nullable Identifier getReplacing() {
+    public Identifier getReplacing() {
         return toReplace;
     }
 
