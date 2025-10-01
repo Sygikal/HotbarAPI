@@ -1,12 +1,12 @@
-package dev.sygii.hotbarapi.network;
+package dev.sygii.hotbarapi.network.packet;
 
 import dev.sygii.hotbarapi.HotbarAPI;
-import net.minecraft.util.Identifier;
 
 //? if =1.20.1 {
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
 
 public class ResetStatusBarsS2CPacket implements FabricPacket {
     public static final Identifier PACKET_ID = HotbarAPI.identifierOf( "reset_status_bars_packet");

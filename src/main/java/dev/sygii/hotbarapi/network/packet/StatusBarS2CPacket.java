@@ -1,4 +1,4 @@
-package dev.sygii.hotbarapi.network;
+package dev.sygii.hotbarapi.network.packet;
 
 import dev.sygii.hotbarapi.HotbarAPI;
 import dev.sygii.hotbarapi.elements.StatusBarRenderer;

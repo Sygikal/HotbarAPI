@@ -1,4 +1,4 @@
-package dev.sygii.hotbarapi.network;
+package dev.sygii.hotbarapi.network.packet;
 
 //? if =1.20.1 {
 import dev.sygii.hotbarapi.HotbarAPI;
@@ -61,7 +61,6 @@ public class HotbarHighlightPacket implements FabricPacket {
 }
 //?} else {
 /*import dev.sygii.hotbarapi.HotbarAPI;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
